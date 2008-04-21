@@ -3,6 +3,10 @@ THINGS TODO (mostly in order of importance)
 * Let's unit test
 
 * Oh, and verify this works in all modern browsers
+  - IE7
+    - FIXME: clear button selector doesn't work
+
+* Elegant way to drag to months before and after the displayed calendars
 
 * Internationalization
 
