@@ -106,10 +106,9 @@ var Timeframe = Class.create({
     (6).times(function(rowNumber) {
       var row = new Element('tr');
       this.weekdayNames.length.times(function(column) {
-        // var weekday = this.weekdayNames[column]; # => use rowNumber
         var cell = new Element('td');
         Element.insert(row, { bottom: cell });
-      }); //.bind(this));
+      });
       Element.insert(body, { bottom: row });
     }.bind(this));
     return body;
@@ -122,10 +121,13 @@ var Timeframe = Class.create({
         pair.value.addClassName('timeframe_field').addClassName(pair.key);
       else {
         var container = new Element('div', { id: pair.key + 'field_container' });
-        Element.insert(container, { bottom: new Element('label', { 'for': pair.key + 'field' }) });
-        Element.insert(container, { bottom: new Element('input', { id: pair.key + 'field', name: pair.key + 'field', type: 'text', value: '' }) });
+        this.fields.set(pair.key, new Element('input', { id: pair.key + 'field', name: pair.key + 'field', type: 'text', value: '' }));
+        Element.insert(container, { bottom: new Element('label', { 'for': pair.key + 'field' }).update(pair.key) });
+        Element.insert(container, { bottom: this.fields.get(pair.key) });
+        Element.insert(fieldset, { bottom: container });
       }
     }.bind(this));
+    if(fieldset.childNodes.length > 0) Element.insert(this.container, { bottom: fieldset });
     this.startfield = this.fields.get('start');
     this.endfield = this.fields.get('end');
   },
