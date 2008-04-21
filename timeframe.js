@@ -292,10 +292,12 @@ var Timeframe = Class.create({
   },
   
   toggleClearButton: function(event) {
+    var el;
     if(event.element().ancestors && event.findElement('td.selected')) {
+      // FIXME: IE7 doesn't parse these selects very well
       if(el = this.container.select('#calendar_0 .pre.selected').first());
       else if(el = this.container.select('.active.selected').first());
-      Element.insert(el, { top: this.clearButton });
+      if(el) Element.insert(el, { top: this.clearButton });
       this.clearButton.removeClassName('active').show();        
     }
     else {
