@@ -33,8 +33,8 @@ The code:
 
 ### Also!!:
 
-The startfield and endfield are parsed with `Date.parse()`, so feel free to 
-use [Datejs.js](http://datejs.com) for ninja-quick date-parsing.
+The `startfield` and `endfield` are parsed with `Date.parse()`, so feel free
+to use [Datejs.js](http://datejs.com) for ninja-quick date-parsing.
 
 
 An example:
