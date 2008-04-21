@@ -18,6 +18,7 @@
     <p>
       <em>Click-draggable. Range-makeable. A better calendar.</em>
     </p>
+    <h3><a href="#example_information">Click here for the example.</a></h3>
     <h2>
       The code:
     </h2>
@@ -39,16 +40,27 @@
       <dt><code>previousbutton</code>, <code>todaybutton</code>, <code>nextbutton</code>, <code>resetbutton</code></dt>
       <dd>Declare the navigational buttons (by default, these are also generated with the timeframe).</dd>
     </dl>
+    <h3>Notes</h3>
+    <ul>
+      <li>I&rsquo;m just sick of multiple date pickers on the same page.</li>
+    </ul>
     <h3>
       Also!!:
     </h3>
     <p>
       The <code>startfield</code> and <code>endfield</code> are parsed with <code>Date.parse()</code>, so feel free to use <a href="http://datejs.com/">Datejs.js</a> for ninja-quick date-parsing.
     </p>
-    <h2>
+    <h2 id="example_information">
       An example:
     </h2>
+    <p>Warning, incompatibilities ahead!</p>
+    <ul>
+      <li>IE likely fails. I just wanted to get this out there for feedback and improvement. Compatibility coming shortly.</li>
+      <li>Some browsers, like Opera and Camino, render it wonkily. This will be addressed, as well.</li>
+      <li>Try <a href="http://apple.com/safari">Safari</a> for the best experience.
+    </ul>
     <div id="example">
+      <h4>Please select a date range below:</h4>
       <ul id="calendar_navigation">
         <li><a href="#" onclick="return false;" id="previous">&larr;</a></li>
         <li><a href="#" onclick="return false;" id="today">T</a></li>
