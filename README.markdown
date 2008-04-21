@@ -34,7 +34,7 @@ The code:
 ### Also!!:
 
 The `startfield` and `endfield` are parsed with `Date.parse()`, so feel free
-to use [Datejs.js](http://datejs.com) for ninja-quick date-parsing.
+to use [Datejs](http://datejs.com) for ninja-quick date-parsing.
 
 
 An example:
@@ -64,6 +64,9 @@ Download
 
 Find the latest version of Timeframe on 
 [Github](http://github.com/stephencelis/timeframe).
+
+More information can be found at 
+[here](http://stephencelis.com/projects/timeframe).
 
 
 Copyright (c) 2008 [Stephen Celis](http://stephencelis.com), released under
