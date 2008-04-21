@@ -1,0 +1,209 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  text-shadow: 0 0 0 #fff;
+  margin: 0;
+}
+  #page_container {
+    margin: auto;
+    width: 600px;
+  }
+  p {
+    line-height: 1.4;
+  }
+  dd {
+    padding: 0 0 10px;
+  }
+  #example {
+    padding: 5px 130px 40px;
+    background: #eee;
+    border: 3px solid #fff;
+    
+    -webkit-box-shadow: 0 1px 10px #999;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 7px;
+  }
+
+/* Navigation */
+
+#calendar_navigation {
+  list-style-type: none;
+  padding: 6px 136px;
+  
+  text-shadow: none;
+}
+  #calendar_navigation li {
+    float: left;
+    width: 20px;
+    height: 20px;
+  }
+    #calendar_navigation a {
+      display: block;
+      padding: 1px 0 2px;
+      text-align: center;
+      text-decoration: none;
+      
+      -webkit-box-shadow: 0 1px 2px #999;
+    }
+      #calendar_navigation a.previous, #calendar_navigation a.next {
+        background: #fff;
+        color: #468966;
+        display: block;
+        text-align: center;
+        text-decoration: none;
+      }
+        #calendar_navigation a.today:hover {
+          background: #246744;
+        }
+        #calendar_navigation a.today:active {
+          background: #024522;
+        }
+        #calendar_navigation a.previous:hover, #calendar_navigation a.next:hover {
+          background: #ccc;
+        }
+        #calendar_navigation a.previous:active, #calendar_navigation a.next:active {
+          background: #aaa;
+        }
+      #calendar_navigation a.previous {
+        -webkit-border-top-left-radius:     10px;
+        -webkit-border-bottom-left-radius:  10px;
+        -moz-border-radius-topleft:         11px;
+        -moz-border-radius-bottomleft:      11px;
+      }
+      #calendar_navigation a.next {
+        -webkit-border-top-right-radius:     10px;
+        -webkit-border-bottom-right-radius:  10px;
+        -moz-border-radius-topright:         11px;
+        -moz-border-radius-bottomright:      11px;
+      }
+
+/* Calendar*/
+
+table {
+  margin: 0 6px 15px;
+  float: left;
+  font-size: 15px;
+  
+  text-shadow: none;
+  -webkit-box-shadow: 0px 2px 6px #999;
+}
+  caption {
+    text-shadow: 0 0 0 #fff;
+  }
+  thead {
+    background: #222;
+    color: #eee;
+  }
+  tbody {
+    background: #fff;
+  }
+  #calendar_0 {
+    clear: both;
+  }
+    th, td {
+      height: 18px;
+      margin: 0;
+      padding: 3px 1px 1px;
+      text-align: center;
+      width: 20px;
+    }
+    td {
+      cursor: pointer;
+    }
+      td:hover {
+        background: #bbb;
+      }
+      td.selected:hover {
+        background: #e99a27;
+      }
+    .pre, .post {
+      background: #aaa;
+      color: #ccc;
+    }
+    .today {
+      background: #468966;
+      color: #eee;
+    }
+    .selected {
+      background: #ffb03b;
+    }
+      .active.startrange {
+        -webkit-border-top-left-radius:     10px;
+        -webkit-border-bottom-left-radius:  10px;
+        -moz-border-radius-topleft:         11px;
+        -moz-border-radius-bottomleft:      11px;
+      }
+      .active.endrange {
+        -webkit-border-top-right-radius:    10px;
+        -webkit-border-bottom-right-radius: 10px;
+        -moz-border-radius-topright:        11px;
+        -moz-border-radius-bottomright:     11px;
+      }
+      .startrange, .endrange {
+        cursor: ew-resize;
+      }
+      .pre.selected, .post.selected {
+        background: #999 ;
+      }
+      .today.selected {
+        background: #b64926;
+      }
+    .stuck {
+      background: #e99a27;
+    }
+      .pre.stuck, .post.stuck {
+        background: #888 ;
+      }
+      .today.stuck {
+        background: #8e2800;
+      }
+
+    a.clear {
+      color: transparent;
+      display: block;
+      height: 0;
+      position: absolute;
+      width: 0;
+    }
+      a.clear span {
+        background-image: url(../images/closebox.png);
+        display: block;
+        height: 30px;
+        left: -18px;
+        position: relative;
+        top: -18px;
+        width: 30px;
+      }
+        a.clear.active span {
+          background-image: url(../images/closebox_selected.png);
+        }
+
+/* Form */
+
+#calendar_form {
+  clear: both;
+}
+  #calendar_form #labels label {
+    font-weight: bold;
+  }
+  #calendar_form #fields span {
+    background: #ccc;
+    border-bottom: 1px solid #999;
+    display: inline-block;
+    padding: 0 4px;
+    
+    -webkit-box-shadow: 0 1px 1px #ccc;
+  }
+    #calendar_form #fields span input {
+      border-style: none;
+      background-color: transparent;
+      font-size: 14px;
+      padding: 2px 6px;
+      width: 96px;
+      
+      -webkit-border-radius: 10px;
+      -moz-border-radius: 11px;
+    }
+      #calendar_form #fields span input:focus {
+        outline: none;
+        background: #aaa;
+      }

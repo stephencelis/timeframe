@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+  <title>Timeframe</title>
+  
+  <link rel="stylesheet" href="stylesheets/timeframe.css" type="text/css" media="screen" title="timeframe" charset="utf-8"/>
+</head>
+<body>
+  <div id="page_container">
+    <h1><a href="http://github.com/stephencelis/timeframe">Timeframe</a><small>, by Stephen Celis</small></h1>
+    <p>
+      <em>Click-draggable. Range-makeable. A better calendar.</em>
+    </p>
+    <h2>
+      The code:
+    </h2>
+    <pre><code>
+      new Timeframe(element, options);
+    </code></pre>
+    <h3>
+      Options available:
+    </h3>
+    <dl>
+      <dt><code>calendars</code></dt>
+      <dd>The number of calendar months showing at once (default: <code>2</code>).</dd>
+      <dt><code>format</code></dt>
+      <dd>The <a href="http://developer.apple.com/documentation/Darwin/Reference/ManPages/man3/strftime.3.html">strftime</a> format for the dates in the input fields (default: <code>%b %d, %Y</code>).</dd>
+      <dt><code>weekoffset</code></dt>
+      <dd>The weekday offset (use <code>1</code> to start the week on Monday).</dd>
+      <dt><code>startfield</code>, <code>endfield</code></dt>
+      <dd>Declare the range start and end <code>input</code> tags (by default, these are generated with the timeframe).</dd>
+      <dt><code>previousbutton</code>, <code>todaybutton</code>, <code>nextbutton</code>, <code>resetbutton</code></dt>
+      <dd>Declare the navigational buttons (by default, these are also generated with the timeframe).</dd>
+    </dl>
+    <h3>
+      Also!!:
+    </h3>
+    <p>
+      The <code>startfield</code> and <code>endfield</code> are parsed with <code>Date.parse()</code>, so feel free to use <a href="http://datejs.com/">Datejs.js</a> for ninja-quick date-parsing.
+    </p>
+    <h2>
+      An example:
+    </h2>
+    <div id="example">
+      <ul id="calendar_navigation">
+        <li><a href="#" onclick="return false;" id="previous">&larr;</a></li>
+        <li><a href="#" onclick="return false;" id="today">T</a></li>
+        <li><a href="#" onclick="return false;" id="next">&rarr;</a></li>
+      </ul>
+      <div id="calendars"></div>
+      <div id="calendar_form">
+        <div id="labels">
+          <label for="start">Embarkation</label> and <label for="end">return</label> (<a href="#" id="reset">reset</a>):
+        </div>
+        <div id="fields">
+          <span>
+            <input type="text" name="start" value="" id="start"/>
+            &ndash;
+            <input type="text" name="end" value="" id="end"/>
+          </span>
+        </div>
+      </div>
+    </div>
+    <p>
+      Generated from this code (see the source for more detail):
+    </p>
+    <pre><code>
+      &lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;
+        //&lt;![CDATA[
+          new Timeframe(&#x27;calendars&#x27;, {
+            startfield: &#x27;start&#x27;,
+            endfield: &#x27;end&#x27;,
+            previousbutton: &#x27;previous&#x27;,
+            todaybutton: &#x27;today&#x27;,
+            nextbutton: &#x27;next&#x27;,
+            resetbutton: &#x27;reset&#x27; });
+        //]]&gt;
+      &lt;/script&gt;
+    </code></pre>
+    <h2>Contact/contribution:</h2>
+    <p>
+       Timeframe is open source and available for forking, pushing, and pulling at <a href="http://github.com">Github</a>:
+    </p>
+    <p>
+      <a href="http://github.com/stephencelis/timeframe">http://github.com/stephencelis/timeframe</a>
+    </p>
+    <p>
+      Contact me with questions/comments at
+      <script type="text/javascript">
+      //<![CDATA[
+      document.write(
+"<n uers=\"znvygb:fgrcura\100fgrcurapryvf\056pbz\">fgrcura\100fgrcurapryvf\056pbz<\057n>".replace(/[a-zA-Z]/g, function(c){return String.fromCharCode((c<="Z"?90:122)>=(c=c.charCodeAt(0)+13)?c:c-26);}));
+        //]]>
+      </script>.
+    </p>
+    <p>
+      Learn more about me at <a href="http://stephencelis.com">http://stephencelis.com</a>.
+    </p>
+    <p>
+      Copyright &copy; 2008 Stephen Celis. Provided under the MIT License.
+    </p>
+  </div>
+  <script type="text/javascript" charset="utf-8" src="scripts/prototype.js"></script>
+  <script type="text/javascript" charset="utf-8" src="../timeframe.js"></script>
+  <script type="text/javascript" charset="utf-8">
+    //<![CDATA[
+      new Timeframe('calendars', {
+        startfield: 'start',
+        endfield: 'end',
+        previousbutton: 'previous',
+        todaybutton: 'today',
+        nextbutton: 'next',
+        resetbutton: 'reset' });
+    //]]>
+  </script>
+</body>
+</html>

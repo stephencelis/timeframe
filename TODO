@@ -1,0 +1,15 @@
+THINGS TODO (mostly in order of importance)
+
+* Let's unit test
+
+* Oh, and verify this works in all modern browsers
+
+* Internationalization
+
+* Range options: minrange, maxrange, defaultrange
+  
+* Prettier initial styles, especially for non-Safari browsers
+
+* iPhone optimization
+
+* Never too late for code cleanup and optimizations
