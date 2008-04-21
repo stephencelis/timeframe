@@ -170,6 +170,7 @@ table {
         height: 30px;
         left: -18px;
         position: relative;
+        text-indent: -10000px;
         top: -18px;
         width: 30px;
       }
