@@ -79,6 +79,7 @@ body {
 /* Calendar*/
 
 table {
+  border-collapse: collapse;
   margin: 0 6px 15px;
   float: left;
   font-size: 15px;
