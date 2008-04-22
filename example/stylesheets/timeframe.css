@@ -167,6 +167,7 @@ table {
     }
       span.clear span {
         background-image: url(../images/closebox.png);
+        cursor: pointer;
         display: block;
         height: 30px;
         left: -18px;
