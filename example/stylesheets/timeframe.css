@@ -158,14 +158,14 @@ table {
         background: #8e2800;
       }
 
-    a.clear {
+    span.clear {
       color: transparent;
       display: block;
       height: 0;
       position: absolute;
       width: 0;
     }
-      a.clear span {
+      span.clear span {
         background-image: url(../images/closebox.png);
         display: block;
         height: 30px;
@@ -175,7 +175,7 @@ table {
         top: -18px;
         width: 30px;
       }
-        a.clear.active span {
+        span.clear.active span {
           background-image: url(../images/closebox_selected.png);
         }
 

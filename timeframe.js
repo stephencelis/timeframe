@@ -78,7 +78,7 @@ var Timeframe = Class.create({
     }.bind(this))
     if(list.childNodes.length > 0) Element.insert(this.container, { bottom: list });
     
-    this.clearButton = new Element('a', { className: 'clear', href: '#', onclick: 'return false;' }).update(new Element('span').update('X'));
+    this.clearButton = new Element('span', { className: 'clear' }).update(new Element('span').update('X'));
   },
   
   buildCalendar: function(calendarNumber) {
@@ -151,7 +151,7 @@ var Timeframe = Class.create({
       
       calendar.select('td').each(function(day) {
         day.date = new Date(iterator); // Is this expensive (we unload these later)? We could store the epoch time instead.
-        day.update(day.date.getDate()).setAttribute('class', inactive || 'active');
+        day.update(day.date.getDate()).setAttribute('className', inactive || 'active');
         if(iterator.toString() === new Date().neutral().toString()) day.addClassName('today');
         iterator.setDate(iterator.getDate() + 1);
         if(iterator.getDate() == 1) inactive = inactive ? false : 'post';
@@ -221,7 +221,7 @@ var Timeframe = Class.create({
   handleMousedown: function(event) {
     if(!event.element().ancestors) return;
     var el, em;
-    if(el = event.findElement('a.clear')) {
+    if(el = event.findElement('span.clear')) {
       el.addClassName('active');
       if(em = event.findElement('td'))
         this.handleDateClick(em, true);
@@ -247,8 +247,8 @@ var Timeframe = Class.create({
   },
   
   resetFields: function() {
-    this.startfield.value = this.startfield.defaultValue;
-    this.endfield.value = this.endfield.defaultValue;
+    this.startfield.value = this.startfield.defaultValue || '';
+    this.endfield.value = this.endfield.defaultValue || '';
     this.date = new Date(this.defaultDate);
     var startdate = new Date(Date.parse(this.startfield.value)).neutral();
     this.startdate = startdate == 'Invalid Date' ? null : startdate;
@@ -287,6 +287,7 @@ var Timeframe = Class.create({
     var el;
     if(!this.dragging)
       this.toggleClearButton(event);
+    else if(event.findElement('span.clear.active'));
     else if(el = event.findElement('td'))
       this.extendRange(el.date);
   },
@@ -294,7 +295,6 @@ var Timeframe = Class.create({
   toggleClearButton: function(event) {
     var el;
     if(event.element().ancestors && event.findElement('td.selected')) {
-      // FIXME: IE7 doesn't parse these selects very well
       if(el = this.container.select('#calendar_0 .pre.selected').first());
       else if(el = this.container.select('.active.selected').first());
       if(el) Element.insert(el, { top: this.clearButton });
@@ -326,7 +326,7 @@ var Timeframe = Class.create({
     if(!this.stuck) {
       var el;
       this.dragging = false;
-      if(el = event.findElement('a.clear.active')) {
+      if(el = event.findElement('span.clear.active')) {
         el.hide().removeClassName('active');
         this.startdate = this.enddate = null;
         this.refreshRange();
@@ -351,8 +351,8 @@ var Timeframe = Class.create({
   },
   
   refreshFields: function() {
-    this.startfield.value = this.startdate ? this.startdate.strftime(this.format) : null;
-    this.endfield.value = this.enddate ? this.enddate.strftime(this.format) : null;
+    this.startfield.value = this.startdate ? this.startdate.strftime(this.format) : '';
+    this.endfield.value = this.enddate ? this.enddate.strftime(this.format) : '';
   }
 });
 
