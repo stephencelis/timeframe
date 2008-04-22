@@ -151,7 +151,7 @@ var Timeframe = Class.create({
       
       calendar.select('td').each(function(day) {
         day.date = new Date(iterator); // Is this expensive (we unload these later)? We could store the epoch time instead.
-        day.update(day.date.getDate()).setAttribute('className', inactive || 'active');
+        day.update(day.date.getDate()).writeAttribute('class', inactive || 'active');
         if(iterator.toString() === new Date().neutral().toString()) day.addClassName('today');
         iterator.setDate(iterator.getDate() + 1);
         if(iterator.getDate() == 1) inactive = inactive ? false : 'post';
