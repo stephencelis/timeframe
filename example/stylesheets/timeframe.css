@@ -79,6 +79,7 @@ body {
 /* Calendar*/
 
 table {
+  background: #fff;
   border-collapse: collapse;
   margin: 0 6px 15px;
   float: left;
@@ -111,51 +112,48 @@ table {
       cursor: pointer;
     }
       td:hover {
-        background: #bbb;
+        background-color: #bbb;
       }
       td.selected:hover {
-        background: #e99a27;
+        background-color: #e99a27;
       }
     .pre, .post {
-      background: #aaa;
+      background-color: #aaa;
       color: #ccc;
     }
     .today {
-      background: #468966;
+      background-color: #468966;
       color: #eee;
     }
     .selected {
-      background: #ffb03b;
+      background-color: #ffb03b;
     }
-      .active.startrange {
-        -webkit-border-top-left-radius:     10px;
-        -webkit-border-bottom-left-radius:  10px;
-        -moz-border-radius-topleft:         11px;
-        -moz-border-radius-bottomleft:      11px;
-      }
-      .active.endrange {
-        -webkit-border-top-right-radius:    10px;
-        -webkit-border-bottom-right-radius: 10px;
-        -moz-border-radius-topright:        11px;
-        -moz-border-radius-bottomright:     11px;
-      }
+    .startrange.active {
+      background-image: url(../images/start.png);
+    }
+    .endrange.active {
+      background-image: url(../images/end.png);
+    }
+    .startrange.endrange.active {
+      background-image: url(../images/startend.png);
+    }
       .startrange, .endrange {
-        cursor: ew-resize;
+        cursor: col-resize;
       }
       .pre.selected, .post.selected {
-        background: #999 ;
+        background-color: #999 ;
       }
       .today.selected {
-        background: #b64926;
+        background-color: #b64926;
       }
     .stuck {
-      background: #e99a27;
+      background-color: #e99a27;
     }
       .pre.stuck, .post.stuck {
-        background: #888 ;
+        background-color: #888 ;
       }
       .today.stuck {
-        background: #8e2800;
+        background-color: #8e2800;
       }
 
     span.clear {
