@@ -251,9 +251,9 @@ var Timeframe = Class.create({
     this.endfield.value = this.endfield.defaultValue || '';
     this.date = new Date(this.defaultDate);
     var startdate = new Date(Date.parse(this.startfield.value)).neutral();
-    this.startdate = startdate == 'Invalid Date' ? null : startdate;
+    this.startdate = (startdate == 'Invalid Date' || startdate == 'NaN') ? null : startdate;
     var enddate = new Date(Date.parse(this.endfield)).neutral();
-    this.enddate = enddate == 'Invalid Date' ? null : enddate;
+    this.enddate = (enddate == 'Invalid Date' || enddate == 'NaN') ? null : enddate;
   },
   
   handleDateClick: function(element, couldClear) {
