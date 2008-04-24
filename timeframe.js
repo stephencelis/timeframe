@@ -72,21 +72,21 @@ var Timeframe = Class.create({
       else {
         var item = new Element('li');
         this.buttons.set(pair.key, new Element('a', { className: 'timeframe_button ' + pair.key, href: '#', onclick: 'return false;' }).update(pair.key));
-        Element.insert(item, { bottom: this.buttons.get(pair.key) });
-        Element.insert(list, { bottom: item });
+        item.insert(this.buttons.get(pair.key));
+        list.insert(item);
       }
     }.bind(this))
-    if(list.childNodes.length > 0) Element.insert(this.container, { bottom: list });
+    if(list.childNodes.length > 0) this.container.insert(list);
     
     this.clearButton = new Element('span', { className: 'clear' }).update(new Element('span').update('X'));
   },
   
   buildCalendar: function(calendarNumber) {
     var calendar = new Element('table', { id: 'calendar_' + calendarNumber, border: 0, cellspacing: 0, cellpadding: 5 });
-    Element.insert(calendar, { top: new Element('caption') });
-    Element.insert(calendar, { bottom: this.buildHead() });
-    Element.insert(calendar, { bottom: this.buildBody() });
-    Element.insert(this.container, { bottom: calendar });
+    calendar.insert(new Element('caption'));
+    calendar.insert(this.buildHead());
+    calendar.insert(this.buildBody());
+    this.container.insert(calendar);
   },
   
   buildHead: function() {
@@ -95,9 +95,9 @@ var Timeframe = Class.create({
     this.weekdayNames.length.times(function(column) {
       var weekday = this.weekdayNames[(column + this.weekoffset) % 7];
       var cell = new Element('th', { scope: 'col', abbr: weekday }).update(weekday.substring(0,1));
-      Element.insert(row, { bottom: cell });
+      row.insert(cell);
     }.bind(this));
-    Element.insert(head, { bottom: row });
+    head.insert(row);
     return head;
   },
   
@@ -107,9 +107,9 @@ var Timeframe = Class.create({
       var row = new Element('tr');
       this.weekdayNames.length.times(function(column) {
         var cell = new Element('td');
-        Element.insert(row, { bottom: cell });
+        row.insert(cell);
       });
-      Element.insert(body, { bottom: row });
+      body.insert(row);
     }.bind(this));
     return body;
   },
@@ -122,12 +122,12 @@ var Timeframe = Class.create({
       else {
         var container = new Element('div', { id: pair.key + 'field_container' });
         this.fields.set(pair.key, new Element('input', { id: pair.key + 'field', name: pair.key + 'field', type: 'text', value: '' }));
-        Element.insert(container, { bottom: new Element('label', { 'for': pair.key + 'field' }).update(pair.key) });
-        Element.insert(container, { bottom: this.fields.get(pair.key) });
-        Element.insert(fieldset, { bottom: container });
+        container.insert(new Element('label', { 'for': pair.key + 'field' }).update(pair.key));
+        container.insert(this.fields.get(pair.key));
+        fieldset.insert(container);
       }
     }.bind(this));
-    if(fieldset.childNodes.length > 0) Element.insert(this.container, { bottom: fieldset });
+    if(fieldset.childNodes.length > 0) this.container.insert(fieldset);
     this.startfield = this.fields.get('start');
     this.endfield = this.fields.get('end');
   },
@@ -163,17 +163,17 @@ var Timeframe = Class.create({
   },
   
   activate: function() {
-    document.observe('click', this.handleClick.bindAsEventListener(this));
-    document.observe('mousedown', this.handleMousedown.bindAsEventListener(this));
-    document.observe('mouseover', this.handleMouseover.bindAsEventListener(this));
-    document.observe('mouseup', this.setPoint.bindAsEventListener(this));
-    document.observe('unload', this.deactivate.bindAsEventListener(this));
+    document.observe('click', this.handleClick.bind(this));
+    document.observe('mousedown', this.handleMousedown.bind(this));
+    document.observe('mouseover', this.handleMouseover.bind(this));
+    document.observe('mouseup', this.setPoint.bind(this));
+    document.observe('unload', this.deactivate.bind(this));
     this.aimFieldObservers();
   },
   
   aimFieldObservers: function(field, assignment) {    
-    [this.startfield, this.endfield].invoke('observe', 'focus', this.declareFocus.bindAsEventListener(this));
-    [this.startfield, this.endfield].invoke('observe', 'blur', this.declareBlur.bindAsEventListener(this));
+    [this.startfield, this.endfield].invoke('observe', 'focus', this.declareFocus.bind(this));
+    [this.startfield, this.endfield].invoke('observe', 'blur', this.declareBlur.bind(this));
     new Form.Element.Observer(this.startfield, 0.2, function(element, value) {
       if(element.hasFocus) {
         var date = new Date(Date.parse(value)).neutral();
