@@ -1,3 +1,19 @@
-.startrange.active, .endrange.active, .startrange.endrange.active {
+.startrange.active, .endrange.active, .startendrange.active, span.clear span, span.clear span.active {
   background-image: none;
 }
+.startrange {
+  filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/start.png', sizingMethod='crop');
+}
+.endrange {
+  filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/end.png', sizingMethod='crop');
+}
+.startendrange {
+  filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/startend.png', sizingMethod='crop');
+}
+span.clear span {
+  filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/closebox.png', sizingMethod='crop');
+}
+  /* Doesn't currently work */
+  span.clear span.active {
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/closebox_selected.png', sizingMethod='crop');
+  }

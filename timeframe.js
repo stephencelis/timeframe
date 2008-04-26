@@ -341,9 +341,12 @@ var Timeframe = Class.create({
     this.container.select('td').each(function(day) {
       if(this.startdate <= day.date && day.date <= this.enddate) {
         day.addClassName('selected');
-        this.stuck || this.mousedown ? day.addClassName('stuck') : day.removeClassName('stuck');
-        this.startdate.toString() == day.date ? day.addClassName('startrange') : day.removeClassName('startrange');
-        this.enddate.toString() == day.date ? day.addClassName('endrange') : day.removeClassName('endrange');
+        this.stuck || this.mousedown ? day.addClassName('stuck') : day.removeClassName('stuck');      
+        var rangeClass = '';
+        if(this.startdate.toString() == day.date) rangeClass += 'start';
+        if(this.enddate.toString() == day.date) rangeClass += 'end';
+        day.removeClassName('startrange').removeClassName('endrange').removeClassName('startendrange');
+        if(rangeClass.length > 0) day.addClassName(rangeClass + 'range');
       }
       else day.removeClassName('selected').removeClassName('startrange').removeClassName('endrange').removeClassName('stuck');
     }.bind(this));

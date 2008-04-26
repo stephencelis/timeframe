@@ -134,10 +134,10 @@ table {
     .endrange.active {
       background-image: url(../images/end.png);
     }
-    .startrange.endrange.active {
+    .startendrange.active {
       background-image: url(../images/startend.png);
     }
-      .startrange, .endrange {
+      .startrange, .endrange, .startendrange {
         cursor: col-resize;
       }
       .pre.selected, .post.selected {
