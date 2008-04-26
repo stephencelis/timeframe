@@ -329,7 +329,6 @@ var Timeframe = Class.create({
       if(el = event.findElement('span.clear.active')) {
         el.hide().removeClassName('active');
         this.startdate = this.enddate = null;
-        this.refreshRange();
         this.refreshFields();
       }
     }
@@ -348,7 +347,7 @@ var Timeframe = Class.create({
         day.removeClassName('startrange').removeClassName('endrange').removeClassName('startendrange');
         if(rangeClass.length > 0) day.addClassName(rangeClass + 'range');
       }
-      else day.removeClassName('selected').removeClassName('startrange').removeClassName('endrange').removeClassName('stuck');
+      else day.removeClassName('selected').removeClassName('stuck').removeClassName('startrange').removeClassName('endrange').removeClassName('startendrange');
     }.bind(this));
     if(this.dragging) this.refreshFields();
   },
