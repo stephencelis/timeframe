@@ -108,17 +108,20 @@ table {
       text-align: center;
       width: 20px;
     }
-    td {
+    td.selectable {
       cursor: pointer;
     }
-      td:hover {
+      td.selectable:hover {
         background-color: #bbb;
       }
-      td.selected:hover {
+      td.selectable.selected:hover {
         background-color: #e99a27;
       }
     .pre, .post {
       background-color: #aaa;
+      color: #ccc;
+    }
+    .unselectable {
       color: #ccc;
     }
     .today {
@@ -137,7 +140,7 @@ table {
     .startendrange.active {
       background-image: url(../images/startend.png);
     }
-      .startrange, .endrange, .startendrange {
+      td.startrange, td.endrange, td.startendrange {
         cursor: col-resize;
       }
       .pre.selected, .post.selected {
@@ -207,4 +210,7 @@ table {
       #calendar_form #fields span input:focus {
         outline: none;
         background: #aaa;
+      }
+      #calendar_form #fields span input.error {
+        background: #faa;
       }

@@ -42,6 +42,8 @@
       <dd>Declare the range start and end <code>input</code> tags (by default, these are generated with the timeframe).</dd>
       <dt><code>previousbutton</code>, <code>todaybutton</code>, <code>nextbutton</code>, <code>resetbutton</code></dt>
       <dd>Declare the navigational buttons (by default, these are also generated with the timeframe).</dd>
+      <dt><code>earliest</code>, <code>latest</code></dt>
+      <dd>The earliest and latest selectable dates (accepts either a <code>Date</code> object or a <code>String</code> that can be parsed with <code>Date.parse()</code>).</dd>
     </dl>
     <h3>Notes</h3>
     <ul>
@@ -51,7 +53,7 @@
       Also!!:
     </h3>
     <p>
-      The <code>startfield</code> and <code>endfield</code> are parsed with <code>Date.parse()</code>, so feel free to use <a href="http://datejs.com/">Datejs.js</a> for ninja-quick date-parsing.
+      The <code>startfield</code> and <code>endfield</code> are parsed with <code>Date.parse()</code>, so feel free to use <a href="http://datejs.com/">Datejs</a> for ninja-quick date-parsing.
     </p>
     <h2 id="example_information">
       An example:

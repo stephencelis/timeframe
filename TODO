@@ -6,16 +6,15 @@ THINGS TODO (mostly in order of importance)
 
 * Elegant way to drag to months before and after the displayed calendars
 
-* Focus/blur for the endfield should bring the focus to the last calendar (not the first, as it stands now)
-
 * The Timeframe.prototype.date should also live-update with the field parsing
 
 * Internationalization
-
-* Range options: minrange, maxrange, defaultrange
   
 * Prettier initial styles, especially for non-Safari browsers
 
 * iPhone optimization
 
 * Never too late for code cleanup and optimizations
+
+* [?] Range options: minrange, maxrange, defaultrange (still thinking about
+  this one)

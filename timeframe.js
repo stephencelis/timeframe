@@ -21,9 +21,9 @@ var Timeframe = Class.create({
     this.disableSelection(this.container);
     
     this.options = $H({
-      calendars:   2,
-      format:      '%b %d, %Y',
-      weekoffset:  0
+      calendars:  2,
+      format:     '%b %d, %Y',
+      weekoffset: 0
     }).merge(options || {});
     
     this.calendars = this.options.get('calendars');
@@ -41,6 +41,15 @@ var Timeframe = Class.create({
       start:    $(this.options.get('startfield')),
       end:      $(this.options.get('endfield'))
     });
+    
+    if(this.options.get('earliest')) {
+      var date = new Date(Date.parse(this.options.get('earliest'))).neutral();
+      this.earliest = (date == 'Invalid Date' || date == 'NaN') ? null : date;
+    }
+    if(this.options.get('latest')) {
+      var date = new Date(Date.parse(this.options.get('latest'))).neutral();
+      this.latest = (date == 'Invalid Date' || date == 'NaN') ? null : date;
+    }
     
     this.format       = this.options.get('format');
     this.weekoffset   = this.options.get('weekoffset');
@@ -152,10 +161,14 @@ var Timeframe = Class.create({
       calendar.select('td').each(function(day) {
         day.date = new Date(iterator); // Is this expensive (we unload these later)? We could store the epoch time instead.
         day.update(day.date.getDate()).writeAttribute('class', inactive || 'active');
+        if((this.earliest && day.date < this.earliest) || (this.latest && day.date > this.latest))
+          day.addClassName('unselectable');
+        else
+          day.addClassName('selectable');
         if(iterator.toString() === new Date().neutral().toString()) day.addClassName('today');
         iterator.setDate(iterator.getDate() + 1);
         if(iterator.getDate() == 1) inactive = inactive ? false : 'post';
-      });
+      }.bind(this));
       
       month.setMonth(month.getMonth() + 1);
     }.bind(this));
@@ -177,14 +190,14 @@ var Timeframe = Class.create({
     new Form.Element.Observer(this.startfield, 0.2, function(element, value) {
       if(element.hasFocus) {
         var date = new Date(Date.parse(value)).neutral();
-        this.startdate = date == 'Invalid Date' ? null : date;
+        this.startdate = (date == 'Invalid Date' || date == 'NaN') ? null : (this.enddate && date > this.enddate) ? null : (this.earliest && date < this.earliest) ? null : date;
         this.refreshRange();
       }
     }.bind(this));
     new Form.Element.Observer(this.endfield, 0.2, function(element, value) {
       if(element.hasFocus) {
         var date = new Date(Date.parse(value)).neutral();
-        this.enddate = date == 'Invalid Date' ? null : date;
+        this.enddate = (date == 'Invalid Date' || date == 'NaN') ? null : (this.startdate && date < this.startdate) ? null : (this.latest && date >= this.latest) ? null : date;
         this.refreshRange();
       }
     }.bind(this));
@@ -204,8 +217,9 @@ var Timeframe = Class.create({
   },
   
   declareBlur: function(event) {
-    event.element().hasFocus = false;
-    this.refreshFields();
+    var el = event.element();
+    el.hasFocus = false;
+    this.refreshFields(el);
   },
   
   deactivate: function() {
@@ -224,10 +238,10 @@ var Timeframe = Class.create({
     var el, em;
     if(el = event.findElement('span.clear')) {
       el.addClassName('active');
-      if(em = event.findElement('td'))
+      if(em = event.findElement('td.selectable'))
         this.handleDateClick(em, true);
     }
-    else if(el = event.findElement('td'))
+    else if(el = event.findElement('td.selectable'))
       this.handleDateClick(el);
     else return;
   },
@@ -289,8 +303,9 @@ var Timeframe = Class.create({
     if(!this.dragging)
       this.toggleClearButton(event);
     else if(event.findElement('span.clear.active'));
-    else if(el = event.findElement('td'))
+    else if(el = event.findElement('td.selectable'))
       this.extendRange(el.date);
+    else this.toggleClearButton(event);
   },
   
   toggleClearButton: function(event) {
@@ -353,9 +368,12 @@ var Timeframe = Class.create({
     if(this.dragging) this.refreshFields();
   },
   
-  refreshFields: function() {
+  refreshFields: function(field) {
     this.startfield.value = this.startdate ? this.startdate.strftime(this.format) : '';
     this.endfield.value = this.enddate ? this.enddate.strftime(this.format) : '';
+    this.startfield.removeClassName('error');
+    this.endfield.removeClassName('error');
+    if(field && field.value == '') field.addClassName('error');
   }
 });
 
