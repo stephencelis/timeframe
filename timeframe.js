@@ -198,6 +198,7 @@ var Timeframe = Class.create({
     }
     else if(this.enddate && event.element() == this.endfield) {
       this.date = new Date(this.enddate)
+      this.date.setMonth(this.date.getMonth() - (this.calendars - 1))
       this.populate();
     }
   },
