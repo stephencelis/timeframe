@@ -200,14 +200,24 @@ var Timeframe = Class.create({
       if(element.hasFocus) {
         var date = new Date(Date.parse(value)).neutral();
         this.startdate = (date == 'Invalid Date' || date == 'NaN') ? null : (this.enddate && date > this.enddate) ? null : (this.earliest && date < this.earliest) ? null : date;
-        this.refreshRange();
+        if(this.startdate) {
+          this.date = new Date(this.startdate);
+          this.populate();
+        }
+        else this.refreshRange();
       }
     }.bind(this));
     new Form.Element.Observer(this.endfield, 0.2, function(element, value) {
       if(element.hasFocus) {
         var date = new Date(Date.parse(value)).neutral();
         this.enddate = (date == 'Invalid Date' || date == 'NaN') ? null : (this.startdate && date < this.startdate) ? null : (this.latest && date >= this.latest) ? null : date;
-        this.refreshRange();
+        if(this.enddate) {
+          this.date = new Date(this.enddate)
+          if(this.enddate.getMonth() != this.startdate.getMonth() && this.enddate.getFullYear() != this.startdate.getFullYear())
+            this.date.setMonth(this.date.getMonth() - (this.calendars - 1));
+          this.populate();
+        }
+        else this.refreshRange();
       }
     }.bind(this));
   },
@@ -215,12 +225,13 @@ var Timeframe = Class.create({
   declareFocus: function(event) {
     event.element().hasFocus = true;
     if(this.startdate && event.element() == this.startfield) {
-      this.date = new Date(this.startdate)
+      this.date = new Date(this.startdate);
       this.populate();
     }
     else if(this.enddate && event.element() == this.endfield) {
-      this.date = new Date(this.enddate)
-      this.date.setMonth(this.date.getMonth() - (this.calendars - 1))
+      this.date = new Date(this.enddate);
+      if(this.enddate.getMonth() != this.startdate.getMonth() && this.enddate.getFullYear() != this.startdate.getFullYear())
+        this.date.setMonth(this.date.getMonth() - (this.calendars - 1));
       this.populate();
     }
   },

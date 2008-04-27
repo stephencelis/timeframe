@@ -2,19 +2,21 @@ THINGS TODO (mostly in order of importance)
 
 * Let's unit test
 
-* Oh, and what about IE6? What a drag, huh?
+* Optimize for IE (prettier than before, but slow like so many molasses)
+
+* Opera, please disable your text selection
 
 * Elegant way to drag to months before and after the displayed calendars
-
-* The Timeframe.prototype.date should also live-update with the field parsing
 
 * Internationalization
   
 * Prettier initial styles, especially for non-Safari browsers
+  - Just get the reset button generation out of there
+  - Maybe do hidden inputs for the generated field defaults
 
 * iPhone optimization
 
-* Never too late for code cleanup and optimizations
+* Never too late for code CLEANUP and optimizations
 
 * [?] Range options: minrange, maxrange, defaultrange (still thinking about
   this one)
