@@ -190,6 +190,7 @@ var Timeframe = Class.create({
     document.observe('mouseover', this.handleMouseover.bind(this));
     document.observe('mouseup', this.setPoint.bind(this));
     document.observe('unload', this.deactivate.bind(this));
+    if(Prototype.Browser.Opera) document.observe('mousemove', this.handleMousemove.bind(this));
     this.aimFieldObservers();
   },
   
@@ -388,6 +389,11 @@ var Timeframe = Class.create({
         if(this.enddate.toString() == day.date) rangeClass += 'end';
         if(rangeClass.length > 0) day.addClassName(rangeClass + 'range');
       }
+      // Trick Opera into refreshing the selection (FIXME)
+      if(Prototype.Browser.Opera) {
+        day.unselectable = 'on';
+        day.unselectable = null;
+      }
     }.bind(this));
     if(this.dragging) this.refreshFields();
   },
@@ -400,6 +406,10 @@ var Timeframe = Class.create({
     this.startfield.removeClassName('error');
     this.endfield.removeClassName('error');
     if(field && field.value == '' && attempt != '') field.addClassName('error');
+  },
+  
+  handleMousemove: function(event) {
+    if(event.findElement('#' + this.container.id + ' td')) window.getSelection().removeAllRanges();
   }
 });
 
