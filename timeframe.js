@@ -375,11 +375,12 @@ var Timeframe = Class.create({
   },
   
   refreshFields: function(field) {
+    var attempt = field.value;
     this.startfield.value = this.startdate ? this.startdate.strftime(this.format) : '';
     this.endfield.value = this.enddate ? this.enddate.strftime(this.format) : '';
     this.startfield.removeClassName('error');
     this.endfield.removeClassName('error');
-    if(field && field.value == '') field.addClassName('error');
+    if(field && field.value == '' && attempt != '') field.addClassName('error');
   }
 });
 
