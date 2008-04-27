@@ -1,3 +1,6 @@
+#calendars li a, #calendars table {
+  display: inline;
+}
 #calendars tbody td.startrange, #calendars tbody td.endrange, #calendars tbody td.startendrange, #calendars tbody td span.clear span, #calendars tbody td span.clear span.active {
   background-image: none;
 }

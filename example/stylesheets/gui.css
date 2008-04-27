@@ -14,6 +14,7 @@ body {
     padding: 0 0 10px;
   }
   #example {
+    padding: 10px;
     padding: 5px 128px 40px;
     background: #eee;
     border: 3px solid #fff;

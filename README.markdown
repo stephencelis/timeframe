@@ -54,9 +54,6 @@ An example:
         new Timeframe('calendars', {
           startfield: 'start',
           endfield: 'end',
-          previousbutton: 'previous',
-          todaybutton: 'today',
-          nextbutton: 'next',
           resetbutton: 'reset' });
       //]]>
     </script>
