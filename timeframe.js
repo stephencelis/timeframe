@@ -87,7 +87,9 @@ var Timeframe = Class.create({
         pair.value.addClassName('timeframe_button').addClassName(pair.key);
       else {
         var item = new Element('li');
-        this.buttons.set(pair.key, new Element('a', { className: 'timeframe_button ' + pair.key, href: '#', onclick: 'return false;' }).update(this.buttonLabels.get(pair.key)));
+        var button = new Element('a', { className: 'timeframe_button ' + pair.key, href: '#', onclick: 'return false;' }).update(this.buttonLabels.get(pair.key));
+        button.onclick = function() { return false; };
+        this.buttons.set(pair.key, button);
         item.insert(this.buttons.get(pair.key));
         list.insert(item);
       }
