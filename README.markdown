@@ -54,6 +54,7 @@ An example:
         new Timeframe('calendars', {
           startfield: 'start',
           endfield: 'end',
+          earliest: new Date(),
           resetbutton: 'reset' });
       //]]>
     </script>
@@ -78,4 +79,4 @@ More information can be found at
 
 
 Copyright (c) 2008 [Stephen Celis](http://stephencelis.com), released under
-the MIT license.
+the [MIT license](http://en.wikipedia.org/wiki/Mit_license).
