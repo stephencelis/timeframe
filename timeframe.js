@@ -35,6 +35,13 @@ var Timeframe = Class.create({
       next:     $(this.options.get('nextbutton')),
       reset:    $(this.options.get('resetbutton'))
     });
+    // Or use these default labels:
+    this.buttonLabels = $H({
+      previous: '&larr;',
+      today:    'T',
+      next:     '&rarr;',
+      reset:    'R'
+    });
     
     // Look for custom fields:
     this.fields = $H({
@@ -80,7 +87,7 @@ var Timeframe = Class.create({
         pair.value.addClassName('timeframe_button').addClassName(pair.key);
       else {
         var item = new Element('li');
-        this.buttons.set(pair.key, new Element('a', { className: 'timeframe_button ' + pair.key, href: '#', onclick: 'return false;' }).update(pair.key));
+        this.buttons.set(pair.key, new Element('a', { className: 'timeframe_button ' + pair.key, href: '#', onclick: 'return false;' }).update(this.buttonLabels.get(pair.key)));
         item.insert(this.buttons.get(pair.key));
         list.insert(item);
       }
@@ -347,8 +354,8 @@ var Timeframe = Class.create({
     if(!this.stuck) {
       var el;
       this.dragging = false;
-      if(el = event.findElement('span.clear')) {
-        el.hide().down('span').removeClassName('active');
+      if(el = event.findElement('span.clear span.active')) {
+        el.removeClassName('active').up('span').hide();
         this.startdate = this.enddate = null;
         this.refreshFields();
       }
@@ -375,7 +382,8 @@ var Timeframe = Class.create({
   },
   
   refreshFields: function(field) {
-    var attempt = field.value;
+    var attempt;
+    if(field) attempt = field.value;
     this.startfield.value = this.startdate ? this.startdate.strftime(this.format) : '';
     this.endfield.value = this.enddate ? this.enddate.strftime(this.format) : '';
     this.startfield.removeClassName('error');
