@@ -65,11 +65,6 @@
     </ul>
     <div id="example">
       <h4>Please select a date range below:</h4>
-      <ul id="calendar_navigation">
-        <li><a href="#" onclick="return false;" id="previous">&larr;</a></li>
-        <li><a href="#" onclick="return false;" id="today">T</a></li>
-        <li><a href="#" onclick="return false;" id="next">&rarr;</a></li>
-      </ul>
       <div id="calendars"></div>
       <div id="calendar_form">
         <div id="labels">
@@ -93,9 +88,6 @@
           new Timeframe(&#x27;calendars&#x27;, {
             startfield: &#x27;start&#x27;,
             endfield: &#x27;end&#x27;,
-            previousbutton: &#x27;previous&#x27;,
-            todaybutton: &#x27;today&#x27;,
-            nextbutton: &#x27;next&#x27;,
             resetbutton: &#x27;reset&#x27; });
         //]]&gt;
       &lt;/script&gt;
@@ -130,9 +122,6 @@
       new Timeframe('calendars', {
         startfield: 'start',
         endfield: 'end',
-        previousbutton: 'previous',
-        todaybutton: 'today',
-        nextbutton: 'next',
         resetbutton: 'reset' });
     //]]>
   </script>

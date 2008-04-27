@@ -1,11 +1,69 @@
+#calendars {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  text-shadow: none;
+}
+
+/* Menu */
+#calendars ul#timeframe_menu {
+  list-style-type: none;
+  font-weight: bold;
+  margin: auto;
+  padding: 0 0 12px;
+  width: 60px;
+}
+  #calendars ul#timeframe_menu li {
+    display: inline;
+  }
+    #calendars ul#timeframe_menu li a {
+      display: inline-block;
+      height: 20px;
+      padding: 2px 0 0;
+      text-align: center;
+      text-decoration: none;
+      width: 20px;
+      -webkit-box-shadow: 0 1px 2px #999;
+    }
+      #calendars ul#timeframe_menu li a.previous, #calendars ul#timeframe_menu li a.next {
+        background: #fff;
+        color: #468966;
+      }
+        #calendars ul#timeframe_menu li a.previous:hover, #calendars ul#timeframe_menu li a.next:hover {
+          background: #ccc;
+        }
+        #calendars ul#timeframe_menu li a.previous:active, #calendars ul#timeframe_menu li a.next:active {
+          background: #aaa;
+        }
+      #calendars ul#timeframe_menu li a.today {
+        background: #468966;
+        color: #eee;
+      }
+        #calendars ul#timeframe_menu li a.today:hover {
+          background: #246744;
+        }
+        #calendars ul#timeframe_menu li a.today:active {
+          background: #024522;
+        }
+      #calendars ul#timeframe_menu li a.previous {
+        -webkit-border-top-left-radius:     10px;
+        -webkit-border-bottom-left-radius:  10px;
+        -moz-border-radius-topleft:         11px;
+        -moz-border-radius-bottomleft:      11px;
+      }
+      #calendars ul#timeframe_menu li a.next {
+        -webkit-border-top-right-radius:     10px;
+        -webkit-border-bottom-right-radius:  10px;
+        -moz-border-radius-topright:         11px;
+        -moz-border-radius-bottomright:      11px;
+      }
+
 /* Calendar*/
 #calendars table {
-  background: #fff;
   border-collapse: collapse;
-  float: left;
+  display: inline-block;
   font-size: 15px;
   margin: 0 6px 12px;
-  -webkit-box-shadow: 0px 2px 6px #999;
 }
   /* Month names */
   #calendars table caption {
@@ -27,6 +85,7 @@
   /* Days */
   #calendars tbody {
     background: #fff;
+    -webkit-box-shadow: 0px 2px 6px #999;
   }
     #calendars tbody td {
       cursor: pointer;
@@ -108,97 +167,3 @@
           #calendars tbody td span.clear span.active {
             background-image: url(../images/closebox_selected.png);
           }
-#calendar_0 {
-  clear: both;
-}
-
-/* Navigation */
-
-#calendar_navigation {
-  list-style-type: none;
-  padding: 6px 136px;
-
-  text-shadow: none;
-}
-  #calendar_navigation li {
-    float: left;
-    width: 20px;
-    height: 20px;
-  }
-    #calendar_navigation a {
-      display: block;
-      padding: 1px 0 2px;
-      text-align: center;
-      text-decoration: none;
-
-      -webkit-box-shadow: 0 1px 2px #999;
-    }
-      #calendar_navigation a.previous, #calendar_navigation a.next {
-        background: #fff;
-        color: #468966;
-        display: block;
-        text-align: center;
-        text-decoration: none;
-      }
-        #calendar_navigation a.today {
-          background-color: #468966;
-          color: #eee;
-        }
-        #calendar_navigation a.today:hover {
-          background: #246744;
-        }
-        #calendar_navigation a.today:active {
-          background: #024522;
-        }
-        #calendar_navigation a.previous:hover, #calendar_navigation a.next:hover {
-          background: #ccc;
-        }
-        #calendar_navigation a.previous:active, #calendar_navigation a.next:active {
-          background: #aaa;
-        }
-      #calendar_navigation a.previous {
-        -webkit-border-top-left-radius:     10px;
-        -webkit-border-bottom-left-radius:  10px;
-        -moz-border-radius-topleft:         11px;
-        -moz-border-radius-bottomleft:      11px;
-      }
-      #calendar_navigation a.next {
-        -webkit-border-top-right-radius:     10px;
-        -webkit-border-bottom-right-radius:  10px;
-        -moz-border-radius-topright:         11px;
-        -moz-border-radius-bottomright:      11px;
-      }
-
-/* Form */
-
-#calendar_form {
-  clear: both;
-}
-  #calendar_form #labels label {
-    font-weight: bold;
-  }
-  #calendar_form #fields span {
-    background: #ccc;
-    border-bottom: 1px solid #999;
-    display: inline-block;
-    padding: 0 4px;
-    
-    -webkit-box-shadow: 0 1px 1px #ccc;
-  }
-    #calendar_form #fields span input {
-      border-style: none;
-      background-color: transparent;
-      font-size: 14px;
-      padding: 2px 6px;
-      width: 96px;
-      
-      -webkit-border-radius: 10px;
-      -moz-border-radius: 11px;
-    }
-      #calendar_form #fields span input:focus {
-        outline: none;
-        background: #aaa;
-      }
-      #calendar_form #fields span input.error {
-        background: #faa;
-      }

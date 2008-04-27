@@ -22,3 +22,37 @@ body {
     -webkit-border-radius: 6px;
     -moz-border-radius: 7px;
   }
+
+/* Form */
+
+#calendar_form {
+  clear: both;
+}
+  #calendar_form #labels label {
+    font-weight: bold;
+  }
+  #calendar_form #fields span {
+    background: #ccc;
+    border-bottom: 1px solid #999;
+    display: inline-block;
+    padding: 0 4px;
+
+    -webkit-box-shadow: 0 1px 1px #ccc;
+  }
+    #calendar_form #fields span input {
+      border-style: none;
+      background-color: transparent;
+      font-size: 14px;
+      padding: 2px 6px;
+      width: 96px;
+
+      -webkit-border-radius: 10px;
+      -moz-border-radius: 11px;
+    }
+      #calendar_form #fields span input:focus {
+        outline: none;
+        background: #aaa;
+      }
+      #calendar_form #fields span input.error {
+        background: #faa;
+      }
