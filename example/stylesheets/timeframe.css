@@ -141,8 +141,8 @@
         }
       
       #calendars tbody td.unselectable {
-        background-color: #ccc;
-        cursor: normal;
+        color: #ccc;
+        cursor: default;
       }
       /* Clear button */
       #calendars tbody td span.clear {
