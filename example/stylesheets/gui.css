@@ -1,0 +1,24 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  text-shadow: 0 0 0 #fff;
+  margin: 0;
+}
+  #page_container {
+    margin: auto;
+    width: 600px;
+  }
+  p {
+    line-height: 1.4;
+  }
+  dd {
+    padding: 0 0 10px;
+  }
+  #example {
+    padding: 5px 128px 40px;
+    background: #eee;
+    border: 3px solid #fff;
+    
+    -webkit-box-shadow: 0 1px 10px #999;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 7px;
+  }
