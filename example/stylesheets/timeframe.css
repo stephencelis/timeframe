@@ -1,34 +1,123 @@
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  text-shadow: 0 0 0 #fff;
-  margin: 0;
+/* Calendar*/
+#calendars table {
+  background: #fff;
+  border-collapse: collapse;
+  float: left;
+  font-size: 15px;
+  margin: 0 6px 12px;
+  -webkit-box-shadow: 0px 2px 6px #999;
 }
-  #page_container {
-    margin: auto;
-    width: 600px;
+  /* Month names */
+  #calendars table caption {
+    text-shadow: 0 0 0 #fff;
   }
-  p {
-    line-height: 1.4;
+  /* Cell sizes */
+  #calendars thead th, #calendars tbody td {
+    height: 18px;
+    margin: 0;
+    padding: 2px 1px;
+    text-align: center;
+    width: 20px;
   }
-  dd {
-    padding: 0 0 10px;
+  /* Weekday letters */
+  #calendars thead {
+    background: #222;
+    color: #eee;
   }
-  #example {
-    padding: 5px 130px 40px;
-    background: #eee;
-    border: 3px solid #fff;
-    
-    -webkit-box-shadow: 0 1px 10px #999;
-    -webkit-border-radius: 6px;
-    -moz-border-radius: 7px;
+  /* Days */
+  #calendars tbody {
+    background: #fff;
   }
+    #calendars tbody td {
+      cursor: pointer;
+    }
+      /* Hover states not available in IE */
+      #calendars tbody td.selectable:hover {
+        background-color: #bbb;
+      }
+      #calendars tbody td.selected:hover, #calendars tbody td.stuck:hover {
+        background-color: #e99a27;
+      }
+      /* Selected states */
+      #calendars tbody td.selected {
+        background-color: #ffb03b;
+      }
+      #calendars tbody td.stuck {
+        background-color: #e99a27;
+      }
+      /* Range markers */
+      #calendars tbody td.startrange, #calendars tbody td.endrange, #calendars tbody td.startendrange {
+        cursor: col-resize;
+      }
+      #calendars tbody td.startrange {
+        background-image: url(../images/start.png);
+      }
+      #calendars tbody td.endrange {
+        background-image: url(../images/end.png);
+      }
+      #calendars tbody td.startendrange {
+        background-image: url(../images/startend.png);
+      }
+      /* Today */
+      #calendars tbody td.today {
+        background-color: #468966;
+        color: #eee;
+      }
+        #calendars tbody td.today_selected {
+          background-color: #b64926;
+        }
+        #calendars tbody td.today_stuck {
+          background-color: #8e2800;
+        }
+      /* Post/pre-month */
+      #calendars tbody td.beyond {
+        background-color: #aaa;
+        background-image: none;
+        color: #ccc;
+      }
+        #calendars tbody td.beyond_selected {
+          background-color: #999;
+        }
+        #calendars tbody td.beyond_stuck {
+          background-color: #888;
+        }
+      
+      #calendars tbody td.unselectable {
+        background-color: #ccc;
+        cursor: normal;
+      }
+      /* Clear button */
+      #calendars tbody td span.clear {
+        color: transparent;
+        display: block;
+        height: 0;
+        position: absolute;
+        width: 0;
+      }
+        #calendars tbody td span.clear span {
+          background-image: url(../images/closebox.png);
+          cursor: pointer;
+          display: block;
+          height: 30px;
+          left: -18px;
+          position: relative;
+          text-indent: -10000px;
+          top: -18px;
+          width: 30px;
+        }
+          #calendars tbody td span.clear span.active {
+            background-image: url(../images/closebox_selected.png);
+          }
+#calendar_0 {
+  clear: both;
+}
 
 /* Navigation */
 
 #calendar_navigation {
   list-style-type: none;
   padding: 6px 136px;
-  
+
   text-shadow: none;
 }
   #calendar_navigation li {
@@ -41,7 +130,7 @@ body {
       padding: 1px 0 2px;
       text-align: center;
       text-decoration: none;
-      
+
       -webkit-box-shadow: 0 1px 2px #999;
     }
       #calendar_navigation a.previous, #calendar_navigation a.next {
@@ -51,6 +140,10 @@ body {
         text-align: center;
         text-decoration: none;
       }
+        #calendar_navigation a.today {
+          background-color: #468966;
+          color: #eee;
+        }
         #calendar_navigation a.today:hover {
           background: #246744;
         }
@@ -75,111 +168,6 @@ body {
         -moz-border-radius-topright:         11px;
         -moz-border-radius-bottomright:      11px;
       }
-
-/* Calendar*/
-
-table {
-  background: #fff;
-  border-collapse: collapse;
-  margin: 0 6px 15px;
-  float: left;
-  font-size: 15px;
-  
-  text-shadow: none;
-  -webkit-box-shadow: 0px 2px 6px #999;
-}
-  caption {
-    text-shadow: 0 0 0 #fff;
-  }
-  thead {
-    background: #222;
-    color: #eee;
-  }
-  tbody {
-    background: #fff;
-  }
-  #calendar_0 {
-    clear: both;
-  }
-    th, td {
-      height: 18px;
-      margin: 0;
-      padding: 3px 1px 1px;
-      text-align: center;
-      width: 20px;
-    }
-    td.selectable {
-      cursor: pointer;
-    }
-      td.selectable:hover {
-        background-color: #bbb;
-      }
-      td.selectable.selected:hover {
-        background-color: #e99a27;
-      }
-    .pre, .post {
-      background-color: #aaa;
-      color: #ccc;
-    }
-    .unselectable {
-      color: #ccc;
-    }
-    .today {
-      background-color: #468966;
-      color: #eee;
-    }
-    .selected {
-      background-color: #ffb03b;
-    }
-    .startrange.active {
-      background-image: url(../images/start.png);
-    }
-    .endrange.active {
-      background-image: url(../images/end.png);
-    }
-    .startendrange.active {
-      background-image: url(../images/startend.png);
-    }
-      td.startrange, td.endrange, td.startendrange {
-        cursor: col-resize;
-      }
-      .pre.selected, .post.selected {
-        background-color: #999 ;
-      }
-      .today.selected {
-        background-color: #b64926;
-      }
-    .stuck {
-      background-color: #e99a27;
-    }
-      .pre.stuck, .post.stuck {
-        background-color: #888 ;
-      }
-      .today.stuck {
-        background-color: #8e2800;
-      }
-
-    span.clear {
-      color: transparent;
-      display: block;
-      height: 0;
-      position: absolute;
-      width: 0;
-    }
-      span.clear span {
-        background-image: url(../images/closebox.png);
-        cursor: pointer;
-        display: block;
-        height: 30px;
-        left: -18px;
-        position: relative;
-        text-indent: -10000px;
-        top: -18px;
-        width: 30px;
-      }
-        span.clear.active span {
-          background-image: url(../images/closebox_selected.png);
-        }
 
 /* Form */
 

@@ -151,11 +151,11 @@ var Timeframe = Class.create({
       
       var iterator = new Date(month);
       var offset = (iterator.getDay() - this.weekoffset) % 7;
-      var inactive = offset > 0 ? 'pre' : false;
+      var inactive = offset > 0 ? 'pre beyond' : false;
       iterator.setDate(iterator.getDate() - offset);
       if(iterator.getDate() > 1 && !inactive) {
         iterator.setDate(iterator.getDate() - 7);
-        if(iterator.getDate() > 1) inactive = 'pre';
+        if(iterator.getDate() > 1) inactive = 'pre beyond';
       }
       
       calendar.select('td').each(function(day) {
@@ -166,8 +166,10 @@ var Timeframe = Class.create({
         else
           day.addClassName('selectable');
         if(iterator.toString() === new Date().neutral().toString()) day.addClassName('today');
+        day.baseClass = day.readAttribute('class');
+        
         iterator.setDate(iterator.getDate() + 1);
-        if(iterator.getDate() == 1) inactive = inactive ? false : 'post';
+        if(iterator.getDate() == 1) inactive = inactive ? false : 'post beyond';
       }.bind(this));
       
       month.setMonth(month.getMonth() + 1);
@@ -223,7 +225,10 @@ var Timeframe = Class.create({
   },
   
   deactivate: function() {
-    this.container.select('td').each(function(day) { day.date = null; });
+    this.container.select('td').each(function(day) {
+      day.baseClass = null;
+      day.date = null;
+    });
   },
   
   handleClick: function(event) {
@@ -237,7 +242,7 @@ var Timeframe = Class.create({
     if(!event.element().ancestors) return;
     var el, em;
     if(el = event.findElement('span.clear')) {
-      el.addClassName('active');
+      el.down('span').addClassName('active');
       if(em = event.findElement('td.selectable'))
         this.handleDateClick(em, true);
     }
@@ -302,7 +307,7 @@ var Timeframe = Class.create({
     var el;
     if(!this.dragging)
       this.toggleClearButton(event);
-    else if(event.findElement('span.clear.active'));
+    else if(event.findElement('span.clear span.active'));
     else if(el = event.findElement('td.selectable'))
       this.extendRange(el.date);
     else this.toggleClearButton(event);
@@ -314,7 +319,7 @@ var Timeframe = Class.create({
       if(el = this.container.select('#calendar_0 .pre.selected').first());
       else if(el = this.container.select('.active.selected').first());
       if(el) Element.insert(el, { top: this.clearButton });
-      this.clearButton.removeClassName('active').show();        
+      this.clearButton.show().down('span').removeClassName('active');        
     }
     else {
       this.clearButton.hide();
@@ -342,8 +347,8 @@ var Timeframe = Class.create({
     if(!this.stuck) {
       var el;
       this.dragging = false;
-      if(el = event.findElement('span.clear.active')) {
-        el.hide().removeClassName('active');
+      if(el = event.findElement('span.clear')) {
+        el.hide().down('span').removeClassName('active');
         this.startdate = this.enddate = null;
         this.refreshFields();
       }
@@ -354,16 +359,15 @@ var Timeframe = Class.create({
   
   refreshRange: function() {
     this.container.select('td').each(function(day) {
+      day.writeAttribute('class', day.baseClass);
       if(this.startdate <= day.date && day.date <= this.enddate) {
-        day.addClassName('selected');
-        this.stuck || this.mousedown ? day.addClassName('stuck') : day.removeClassName('stuck');      
+        var baseClass = day.hasClassName('beyond') ? 'beyond_' : day.hasClassName('today') ? 'today_' : '';
+        day.addClassName(baseClass + (this.stuck || this.mousedown ? 'stuck' : 'selected'));
         var rangeClass = '';
         if(this.startdate.toString() == day.date) rangeClass += 'start';
         if(this.enddate.toString() == day.date) rangeClass += 'end';
-        day.removeClassName('startrange').removeClassName('endrange').removeClassName('startendrange');
         if(rangeClass.length > 0) day.addClassName(rangeClass + 'range');
       }
-      else day.removeClassName('selected').removeClassName('stuck').removeClassName('startrange').removeClassName('endrange').removeClassName('startendrange');
     }.bind(this));
     if(this.dragging) this.refreshFields();
   },
