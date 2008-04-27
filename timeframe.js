@@ -361,8 +361,10 @@ var Timeframe = Class.create({
     this.container.select('td').each(function(day) {
       day.writeAttribute('class', day.baseClass);
       if(this.startdate <= day.date && day.date <= this.enddate) {
-        var baseClass = day.hasClassName('beyond') ? 'beyond_' : day.hasClassName('today') ? 'today_' : '';
-        day.addClassName(baseClass + (this.stuck || this.mousedown ? 'stuck' : 'selected'));
+        var baseClass = day.hasClassName('beyond') ? 'beyond_' : day.hasClassName('today') ? 'today_' : null;
+        var state = this.stuck || this.mousedown ? 'stuck' : 'selected';
+        if(baseClass) day.addClassName(baseClass + state);
+        day.addClassName(state);
         var rangeClass = '';
         if(this.startdate.toString() == day.date) rangeClass += 'start';
         if(this.enddate.toString() == day.date) rangeClass += 'end';
