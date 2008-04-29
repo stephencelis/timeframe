@@ -8,7 +8,7 @@ var Timeframe = Class.create({
   * Syntax:
   * 
   * new Timeframe('el_id', {
-  *   calendars: 2,
+  *   months: 2,
   *   weekoffset: 0
   * });
   */
@@ -18,15 +18,15 @@ var Timeframe = Class.create({
     Timeframes.push(this);
     
     this.container = $(element);
-    this.disableSelection(this.container);
     
     this.options = $H({
-      calendars:  2,
+      months:     2,
       format:     '%b %d, %Y',
       weekoffset: 0
     }).merge(options || {});
     
-    this.calendars = this.options.get('calendars');
+    this.months = this.options.get('months');
+    this.calendars = [];
     
     // Look for custom buttons:
     this.buttons = $H({
@@ -49,15 +49,8 @@ var Timeframe = Class.create({
       end:      $(this.options.get('endfield'))
     });
     
-    if(this.options.get('earliest')) {
-      var date = new Date(Date.parse(this.options.get('earliest'))).neutral();
-      this.earliest = (date == 'Invalid Date' || date == 'NaN') ? null : date;
-    }
-    if(this.options.get('latest')) {
-      var date = new Date(Date.parse(this.options.get('latest'))).neutral();
-      this.latest = (date == 'Invalid Date' || date == 'NaN') ? null : date;
-    }
-    
+    this.earliest     = this.parse(this.options.get('earliest'));
+    this.latest       = this.parse(this.options.get('latest'));    
     this.format       = this.options.get('format');
     this.weekoffset   = this.options.get('weekoffset');
     this.weekdayNames = Date.weekdays; // this.weekdayNames = Date.internationalizations.get(this.options.get('locale'));
@@ -65,19 +58,25 @@ var Timeframe = Class.create({
     this.date         = new Date();
     this.defaultDate  = new Date(this.date)
     
+    this.disableSelection();
     this.buildButtons();
-    this.calendars.times(function(calendar) { this.buildCalendar(calendar) }.bind(this));
+    this.months.times(function(month) { this.buildCalendar(month) }.bind(this));
     this.buildFields();
     this.populate();
     this.activate();
   },
   
+  parse: function(string) {
+    var date = new Date(Date.parse(string)).neutral();
+    return (date == 'Invalid Date' || date == 'NaN') ? null : date;
+  },
+  
   // Make sure dragging doesn't select any calendar text
-  disableSelection: function(element) {
-    element.onselectstart       = function() { return false; };
-    element.unselectable        = 'on';
-    element.style.MozUserSelect = 'none';
-    element.style.cursor        = 'default';
+  disableSelection: function() {
+    this.container.onselectstart       = function() { return false; };
+    this.container.unselectable        = 'on';
+    this.container.style.MozUserSelect = 'none';
+    this.container.style.cursor        = 'default';
   },
   
   buildButtons: function() {
@@ -105,6 +104,7 @@ var Timeframe = Class.create({
     calendar.insert(this.buildHead());
     calendar.insert(this.buildBody());
     this.container.insert(calendar);
+    this.calendars.push(calendar);
   },
   
   buildHead: function() {
@@ -153,7 +153,7 @@ var Timeframe = Class.create({
   populate: function() {
     var month = this.date.neutral();
     month.setDate(1);
-    this.calendars.times(function(n) {
+    this.months.times(function(n) {      
       var calendar = $('calendar_' + n);
       var caption = calendar.select('caption').first();
       caption.update(this.monthNames[month.getMonth()] + ' ' + month.getFullYear());
@@ -180,6 +180,19 @@ var Timeframe = Class.create({
         iterator.setDate(iterator.getDate() + 1);
         if(iterator.getDate() == 1) inactive = inactive ? false : 'post beyond';
       }.bind(this));
+      
+      if(this.earliest && n == 0) {
+        if(month.getMonth() == this.earliest.getMonth() && month.getFullYear() == this.earliest.getFullYear())
+          this.buttons.get('previous').addClassName('disabled');
+        else
+          this.buttons.get('previous').removeClassName('disabled');
+      }  
+      if(this.latest && n == (this.calendars.length - 1)) {
+        if(month.getMonth() == this.latest.getMonth() && month.getFullYear == this.latest.getFullYear())
+          this.buttons.get('next').addClassName('disabled');
+        else
+          this.buttons.get('next').removeClassName('disabled');
+      }        
       
       month.setMonth(month.getMonth() + 1);
     }.bind(this));
@@ -255,8 +268,10 @@ var Timeframe = Class.create({
   handleClick: function(event) {
     if(!event.element().ancestors) return;
     var el;
-    if(el = event.findElement('a.timeframe_button'))
+    if(el = event.findElement('a.timeframe_button')) {
+      if(el.hasClassName('disabled')) return;
       this.handleButtonClick(event, el);
+    }
   },
   
   handleMousedown: function(event) {

@@ -35,6 +35,11 @@
         #calendars ul#timeframe_menu li a.previous:active, #calendars ul#timeframe_menu li a.next:active {
           background: #aaa;
         }
+      #calendars ul#timeframe_menu li a.disabled, #calendars ul#timeframe_menu li a.disabled:hover, #calendars ul#timeframe_menu li a.disabled:active {
+        background: #fff;
+        color: #ccc;
+        cursor: default;
+      }
       #calendars ul#timeframe_menu li a.today {
         background: #468966;
         color: #eee;
