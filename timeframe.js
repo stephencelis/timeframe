@@ -148,6 +148,8 @@ var Timeframe = Class.create({
     if(fieldset.childNodes.length > 0) this.container.insert(fieldset);
     this.startfield = this.fields.get('start');
     this.endfield = this.fields.get('end');
+    this.parseStartField();
+    this.parseEndField();
   },
   
   populate: function() {
@@ -214,28 +216,36 @@ var Timeframe = Class.create({
     [this.startfield, this.endfield].invoke('observe', 'blur', this.declareBlur.bind(this));
     new Form.Element.Observer(this.startfield, 0.2, function(element, value) {
       if(element.hasFocus) {
-        var date = new Date(Date.parse(value)).neutral();
-        this.startdate = (date == 'Invalid Date' || date == 'NaN') ? null : (this.enddate && date > this.enddate) ? null : (this.earliest && date < this.earliest) ? null : date;
-        if(this.startdate) {
-          this.date = new Date(this.startdate);
-          this.populate();
-        }
-        else this.refreshRange();
+        this.parseStartField(value);
       }
     }.bind(this));
     new Form.Element.Observer(this.endfield, 0.2, function(element, value) {
       if(element.hasFocus) {
-        var date = new Date(Date.parse(value)).neutral();
-        this.enddate = (date == 'Invalid Date' || date == 'NaN') ? null : (this.startdate && date < this.startdate) ? null : (this.latest && date >= this.latest) ? null : date;
-        if(this.enddate) {
-          this.date = new Date(this.enddate)
-          if(this.enddate.getMonth() != this.startdate.getMonth() && this.enddate.getFullYear() != this.startdate.getFullYear())
-            this.date.setMonth(this.date.getMonth() - (this.calendars - 1));
-          this.populate();
-        }
-        else this.refreshRange();
+        this.parseEndField(value);
       }
     }.bind(this));
+  },
+  
+  parseStartField: function() {
+    var date = new Date(Date.parse(this.startfield.value)).neutral();
+    this.startdate = (date == 'Invalid Date' || date == 'NaN') ? null : (this.enddate && date > this.enddate) ? null : (this.earliest && date < this.earliest) ? null : date;
+    if(this.startdate) {
+      this.date = new Date(this.startdate);
+      this.populate();
+    }
+    else this.refreshRange();
+  },
+  
+  parseEndField: function() {
+    var date = new Date(Date.parse(this.endfield.value)).neutral();
+    this.enddate = (date == 'Invalid Date' || date == 'NaN') ? null : (this.startdate && date < this.startdate) ? null : (this.latest && date >= this.latest) ? null : date;
+    if(this.enddate) {
+      this.date = new Date(this.enddate)
+      if(this.enddate.getMonth() != this.startdate.getMonth() && this.enddate.getFullYear() != this.startdate.getFullYear())
+        this.date.setMonth(this.date.getMonth() - (this.calendars - 1));
+      this.populate();
+    }
+    else this.refreshRange();
   },
   
   declareFocus: function(event) {
