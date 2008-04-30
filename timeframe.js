@@ -67,8 +67,8 @@ var Timeframe = Class.create({
   },
   
   parse: function(string) {
-    var date = new Date(Date.parse(string)).neutral();
-    return (date == 'Invalid Date' || date == 'NaN') ? null : date;
+    var date = new Date(Date.parse(string));
+    return (date == 'Invalid Date' || date == 'NaN') ? null : date.neutral();
   },
   
   // Make sure dragging doesn't select any calendar text
@@ -227,8 +227,8 @@ var Timeframe = Class.create({
   },
   
   parseStartField: function() {
-    var date = new Date(Date.parse(this.startfield.value)).neutral();
-    this.startdate = (date == 'Invalid Date' || date == 'NaN') ? null : (this.enddate && date > this.enddate) ? null : (this.earliest && date < this.earliest) ? null : date;
+    var date = new Date(Date.parse(this.startfield.value));
+    this.startdate = (date == 'Invalid Date' || date == 'NaN') ? null : (this.enddate && date > this.enddate) ? null : (this.earliest && date < this.earliest) ? null : date.neutral();
     if(this.startdate) {
       this.date = new Date(this.startdate);
       this.populate();
@@ -237,11 +237,11 @@ var Timeframe = Class.create({
   },
   
   parseEndField: function() {
-    var date = new Date(Date.parse(this.endfield.value)).neutral();
-    this.enddate = (date == 'Invalid Date' || date == 'NaN') ? null : (this.startdate && date < this.startdate) ? null : (this.latest && date >= this.latest) ? null : date;
+    var date = new Date(Date.parse(this.endfield.value));
+    this.enddate = (date == 'Invalid Date' || date == 'NaN') ? null : (this.startdate && date < this.startdate) ? null : (this.latest && date >= this.latest) ? null : date.neutral();
     if(this.enddate) {
       this.date = new Date(this.enddate)
-      if(this.enddate.getMonth() != this.startdate.getMonth() && this.enddate.getFullYear() != this.startdate.getFullYear())
+      if(this.startdate && this.enddate.getMonth() != this.startdate.getMonth() && this.enddate.getFullYear() != this.startdate.getFullYear())
         this.date.setMonth(this.date.getMonth() - (this.calendars - 1));
       this.populate();
     }
@@ -256,7 +256,7 @@ var Timeframe = Class.create({
     }
     else if(this.enddate && event.element() == this.endfield) {
       this.date = new Date(this.enddate);
-      if(this.enddate.getMonth() != this.startdate.getMonth() && this.enddate.getFullYear() != this.startdate.getFullYear())
+      if(this.startdate && this.enddate.getMonth() != this.startdate.getMonth() && this.enddate.getFullYear() != this.startdate.getFullYear())
         this.date.setMonth(this.date.getMonth() - (this.calendars - 1));
       this.populate();
     }
