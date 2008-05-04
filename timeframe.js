@@ -1,125 +1,76 @@
-Date.weekdays = $w('Sunday Monday Tuesday Wednesday Thursday Friday Saturday');
-Date.months   = $w('January February March April May June July August September October November December');
+/* Timeframe, version 0.2
+ * (c) 2008 Stephen Celis
+ *
+ * Freely distributable under the terms of an MIT-style license. 
+ * ------------------------------------------------------------- */
+
+if(typeof Prototype == 'undefined' || parseFloat(Prototype.Version.substring(0, 3)) < 1.6)
+  throw 'Timeframe requires Prototype version 1.6 or greater.';
+
+var Localizations = $H({
+  // More localizations included in 'timeframe_localizations.js'
+  US: $H({
+    format:     '%b %d, %Y',
+    months:     $w('January February March April May June July August September October November December'),
+    weekdays:   $w('Sunday Monday Tuesday Wednesday Thursday Friday Saturday'),
+    weekOffset: 0
+  })
+});
 
 var Timeframes = [];
 
 var Timeframe = Class.create({
- /**
-  * Syntax:
-  * 
-  * new Timeframe('el_id', {
-  *   months: 2,
-  *   weekoffset: 0
-  * });
-  */
-  Version: '0.1 Calamari',
+  Version: '0.2',
   
   initialize: function(element, options) {
     Timeframes.push(this);
     
-    this.container = $(element);
-    
-    this.options = $H({
-      months:     2,
-      format:     '%b %d, %Y',
-      weekoffset: 0
-    }).merge(options || {});
-    
+    this.element = $(element);
+    this.options = $H({ months: 2, locale: 'US' }).merge(options || {});;
     this.months = this.options.get('months');
-    this.calendars = [];
+    this.locale = this.options.get('locale').toUpperCase();
     
-    // Look for custom buttons:
+    this.weekdayNames = Localizations.get(this.locale).get('weekdays');
+    this.monthNames   = Localizations.get(this.locale).get('months');
+    this.format       = this.options.get('format')     || Localizations.get(this.locale).get('format');
+    this.weekOffset   = this.options.get('weekOffset') || Localizations.get(this.locale).get('weekOffset');
+    
     this.buttons = $H({
-      previous: $(this.options.get('previousbutton')),
-      today:    $(this.options.get('todaybutton')),
-      next:     $(this.options.get('nextbutton')),
-      reset:    $(this.options.get('resetbutton'))
-    });
-    // Or use these default labels:
-    this.buttonLabels = $H({
-      previous: '&larr;',
-      today:    'T',
-      next:     '&rarr;',
-      reset:    'R'
-    });
+      previous: $H({ label: '&larr;', element: $(this.options.get('previousButton')) }),
+      today:    $H({ label: 'T',      element: $(this.options.get('todayButton')) }),
+      reset:    $H({ label: 'R',      element: $(this.options.get('resetButton')) }),
+      next:     $H({ label: '&rarr;', element: $(this.options.get('nextButton')) })
+    })
+    this.fields = $H({ start: $(this.options.get('startField')), end: $(this.options.get('endField')) });
     
-    // Look for custom fields:
-    this.fields = $H({
-      start:    $(this.options.get('startfield')),
-      end:      $(this.options.get('endfield'))
-    });
+    this.range = $H({});
+    this._buildButtons()._buildFields();
+    this.earliest = Date.parseToObject(this.options.get('earliest'));
+    this.latest   = Date.parseToObject(this.options.get('latest'));
     
-    this.earliest     = this.parse(this.options.get('earliest'));
-    this.latest       = this.parse(this.options.get('latest'));    
-    this.format       = this.options.get('format');
-    this.weekoffset   = this.options.get('weekoffset');
-    this.weekdayNames = Date.weekdays; // this.weekdayNames = Date.internationalizations.get(this.options.get('locale'));
-    this.monthNames   = Date.months;   // this.monthNames   = Date.internationalizations.get(this.options.get('locale'));
-    this.date         = new Date();
-    this.defaultDate  = new Date(this.date)
+    this.calendars = [];    
+    this.element.insert(new Element('div', { id: 'calendars_container' }));
+    this.months.times(function(month) { this.createCalendar(month) }.bind(this));
     
-    this.disableSelection();
-    this.buildButtons();
-    this.months.times(function(month) { this.buildCalendar(month) }.bind(this));
-    this.buildFields();
-    this.populate();
-    this.activate();
+    this.register().populate().refreshRange();
   },
   
-  parse: function(string) {
-    var date = new Date(Date.parse(string));
-    return (date == 'Invalid Date' || date == 'NaN') ? null : date.neutral();
-  },
+  // Scaffolding
   
-  // Make sure dragging doesn't select any calendar text
-  disableSelection: function() {
-    this.container.onselectstart       = function() { return false; };
-    this.container.unselectable        = 'on';
-    this.container.style.MozUserSelect = 'none';
-    this.container.style.cursor        = 'default';
-  },
-  
-  buildButtons: function() {
-    var list = new Element('ul', { id: 'timeframe_menu' });
-    this.buttons.each(function(pair) {
-      if(pair.value)
-        pair.value.addClassName('timeframe_button').addClassName(pair.key);
-      else {
-        var item = new Element('li');
-        var button = new Element('a', { className: 'timeframe_button ' + pair.key, href: '#', onclick: 'return false;' }).update(this.buttonLabels.get(pair.key));
-        button.onclick = function() { return false; };
-        this.buttons.set(pair.key, button);
-        item.insert(this.buttons.get(pair.key));
-        list.insert(item);
-      }
-    }.bind(this))
-    if(list.childNodes.length > 0) this.container.insert(list);
-    
-    this.clearButton = new Element('span', { className: 'clear' }).update(new Element('span').update('X'));
-  },
-  
-  buildCalendar: function(calendarNumber) {
-    var calendar = new Element('table', { id: 'calendar_' + calendarNumber, border: 0, cellspacing: 0, cellpadding: 5 });
+  createCalendar: function() {
+    var calendar = new Element('table', { id: 'calendar_' + this.calendars.length, border: 0, cellspacing: 0, cellpadding: 5 });
     calendar.insert(new Element('caption'));
-    calendar.insert(this.buildHead());
-    calendar.insert(this.buildBody());
-    this.container.insert(calendar);
-    this.calendars.push(calendar);
-  },
-  
-  buildHead: function() {
+    
     var head = new Element('thead');
     var row  = new Element('tr');
     this.weekdayNames.length.times(function(column) {
-      var weekday = this.weekdayNames[(column + this.weekoffset) % 7];
+      var weekday = this.weekdayNames[(column + this.weekOffset) % 7];
       var cell = new Element('th', { scope: 'col', abbr: weekday }).update(weekday.substring(0,1));
       row.insert(cell);
     }.bind(this));
     head.insert(row);
-    return head;
-  },
-  
-  buildBody: function() {
+    calendar.insert(head);
+    
     var body = new Element('tbody');
     (6).times(function(rowNumber) {
       var row = new Element('tr');
@@ -129,27 +80,18 @@ var Timeframe = Class.create({
       });
       body.insert(row);
     }.bind(this));
-    return body;
+    calendar.insert(body);
+    
+    this.element.down('div#calendars_container').insert(calendar);
+    this.calendars.push(calendar);
+    this.months = this.calendars.length;
+    return this;
   },
   
-  buildFields: function() {
-    var fieldset = new Element('div', { id: 'timeframe_fields' });
-    this.fields.each(function(pair) {
-      if(pair.value)
-        pair.value.addClassName('timeframe_field').addClassName(pair.key);
-      else {
-        var container = new Element('div', { id: pair.key + 'field_container' });
-        this.fields.set(pair.key, new Element('input', { id: pair.key + 'field', name: pair.key + 'field', type: 'text', value: '' }));
-        container.insert(new Element('label', { 'for': pair.key + 'field' }).update(pair.key));
-        container.insert(this.fields.get(pair.key));
-        fieldset.insert(container);
-      }
-    }.bind(this));
-    if(fieldset.childNodes.length > 0) this.container.insert(fieldset);
-    this.startfield = this.fields.get('start');
-    this.endfield = this.fields.get('end');
-    this.parseStartField();
-    this.parseEndField();
+  destroyCalendar: function() {
+    this.calendars.pop().remove();
+    this.months = this.calendars.length;
+    return this;
   },
   
   populate: function() {
@@ -161,7 +103,7 @@ var Timeframe = Class.create({
       caption.update(this.monthNames[month.getMonth()] + ' ' + month.getFullYear());
       
       var iterator = new Date(month);
-      var offset = (iterator.getDay() - this.weekoffset) % 7;
+      var offset = (iterator.getDay() - this.weekOffset) % 7;
       var inactive = offset > 0 ? 'pre beyond' : false;
       iterator.setDate(iterator.getDate() - offset);
       if(iterator.getDate() > 1 && !inactive) {
@@ -183,123 +125,142 @@ var Timeframe = Class.create({
         if(iterator.getDate() == 1) inactive = inactive ? false : 'post beyond';
       }.bind(this));
       
-      if(this.earliest && n == 0) {
-        if(month.getMonth() == this.earliest.getMonth() && month.getFullYear() == this.earliest.getFullYear())
-          this.buttons.get('previous').addClassName('disabled');
-        else
-          this.buttons.get('previous').removeClassName('disabled');
-      }  
-      if(this.latest && n == (this.calendars.length - 1)) {
-        if(month.getMonth() == this.latest.getMonth() && month.getFullYear == this.latest.getFullYear())
-          this.buttons.get('next').addClassName('disabled');
-        else
-          this.buttons.get('next').removeClassName('disabled');
-      }        
-      
       month.setMonth(month.getMonth() + 1);
     }.bind(this));
-    this.refreshRange();
+    return this;
   },
   
-  activate: function() {
-    document.observe('click', this.handleClick.bind(this));
-    document.observe('mousedown', this.handleMousedown.bind(this));
-    document.observe('mouseover', this.handleMouseover.bind(this));
-    document.observe('mouseup', this.setPoint.bind(this));
-    document.observe('unload', this.deactivate.bind(this));
+  _buildButtons: function() {
+    var buttonList = new Element('ul', { id: 'timeframe_menu' });
+    this.buttons.each(function(pair) {
+      if(pair.value.get('element'))
+        pair.value.get('element').addClassName('timeframe_button').addClassName(pair.key);
+      else {
+        var item = new Element('li');
+        var button = new Element('a', { className: 'timeframe_button ' + pair.key, href: '#', onclick: 'return false;' }).update(pair.value.get('label'));
+        button.onclick = function() { return false; };
+        pair.value.set('element', button);
+        item.insert(button);
+        buttonList.insert(item);
+      }
+    }.bind(this))
+    if(buttonList.childNodes.length > 0) this.element.insert({ top: buttonList });
+    this.clearButton = new Element('span', { className: 'clear' }).update(new Element('span').update('X'));
+    return this;
+  },
+  
+  _buildFields: function() {
+    var fieldset = new Element('div', { id: 'timeframe_fields' });
+    this.fields.each(function(pair) {
+      if(pair.value)
+        pair.value.addClassName('timeframe_field').addClassName(pair.key);
+      else {
+        var container = new Element('div', { id: pair.key + 'field_container' });
+        this.fields.set(pair.key, new Element('input', { id: pair.key + 'field', name: pair.key + 'field', type: 'text', value: '' }));
+        container.insert(new Element('label', { 'for': pair.key + 'field' }).update(pair.key));
+        container.insert(this.fields.get(pair.key));
+        fieldset.insert(container);
+      }
+    }.bind(this));
+    if(fieldset.childNodes.length > 0) this.element.insert(fieldset);
+    this.parseField('start').refreshField('start').parseField('end').refreshField('end').initDate = new Date(this.date);
+    return this;
+  },
+  
+  // Event registration
+  
+  register: function() {
+    document.observe('click', this.eventClick.bind(this));
+    document.observe('mousedown', this.eventMouseDown.bind(this));
+    document.observe('mouseover', this.eventMouseOver.bind(this));
+    document.observe('mouseup', this.eventMouseUp.bind(this));
+    document.observe('unload', this.unregister.bind(this));
     if(Prototype.Browser.Opera) document.observe('mousemove', this.handleMousemove.bind(this));
-    this.aimFieldObservers();
+    return this._registerFieldObserver('start')._registerFieldObserver('end')._disableTextSelection();
   },
   
-  aimFieldObservers: function(field, assignment) {    
-    [this.startfield, this.endfield].invoke('observe', 'focus', this.declareFocus.bind(this));
-    [this.startfield, this.endfield].invoke('observe', 'blur', this.declareBlur.bind(this));
-    new Form.Element.Observer(this.startfield, 0.2, function(element, value) {
-      if(element.hasFocus) {
-        this.parseStartField(value);
-      }
-    }.bind(this));
-    new Form.Element.Observer(this.endfield, 0.2, function(element, value) {
-      if(element.hasFocus) {
-        this.parseEndField(value);
-      }
-    }.bind(this));
+  unregister: function() {
+    this.element.select('td').each(function(day) { day.date = day.baseClass = null; });
   },
   
-  parseStartField: function() {
-    var date = new Date(Date.parse(this.startfield.value));
-    this.startdate = (date == 'Invalid Date' || date == 'NaN') ? null : (this.enddate && date > this.enddate) ? null : (this.earliest && date < this.earliest) ? null : date.neutral();
-    if(this.startdate) {
-      this.date = new Date(this.startdate);
-      this.populate();
-    }
-    else this.refreshRange();
+  _registerFieldObserver: function(fieldName) {
+    var field = this.fields.get(fieldName);
+    field.observe('focus', function() { field.hasFocus = true; this.parseField(fieldName, true); }.bind(this));
+    field.observe('blur', function() { this.refreshField(fieldName); }.bind(this));
+    new Form.Element.Observer(field, 0.2, function(element, value) { if(element.hasFocus) this.parseField(fieldName, true); }.bind(this));
+    return this;
   },
   
-  parseEndField: function() {
-    var date = new Date(Date.parse(this.endfield.value));
-    this.enddate = (date == 'Invalid Date' || date == 'NaN') ? null : (this.startdate && date < this.startdate) ? null : (this.latest && date >= this.latest) ? null : date.neutral();
-    if(this.enddate) {
-      this.date = new Date(this.enddate)
-      if(this.startdate && this.enddate.getMonth() != this.startdate.getMonth() && this.enddate.getFullYear() != this.startdate.getFullYear())
-        this.date.setMonth(this.date.getMonth() - (this.calendars - 1));
-      this.populate();
-    }
-    else this.refreshRange();
+  _disableTextSelection: function() {
+    this.element.onselectstart       = function() { return false; };
+    this.element.unselectable        = 'on';
+    this.element.style.MozUserSelect = 'none';
+    this.element.style.cursor        = 'default';
+    return this;
   },
   
-  declareFocus: function(event) {
-    event.element().hasFocus = true;
-    if(this.startdate && event.element() == this.startfield) {
-      this.date = new Date(this.startdate);
-      this.populate();
-    }
-    else if(this.enddate && event.element() == this.endfield) {
-      this.date = new Date(this.enddate);
-      if(this.startdate && this.enddate.getMonth() != this.startdate.getMonth() && this.enddate.getFullYear() != this.startdate.getFullYear())
-        this.date.setMonth(this.date.getMonth() - (this.calendars - 1));
-      this.populate();
-    }
+  // Fields
+  
+  parseField: function(fieldName, populate) {
+    var field = this.fields.get(fieldName);
+    var date = Date.parseToObject(this.fields.get(fieldName).value);
+    var failure = this.validateField(fieldName, date);
+    if(failure != 'hard') {
+      this.range.set(fieldName, date);
+      field.removeClassName('error');
+    } else if(field.hasFocus)
+      field.addClassName('error');
+    var date = Date.parseToObject(this.range.get(fieldName));
+    this.date = date || new Date();
+    if(populate && date) this.populate()
+    this.refreshRange();
+    return this;
   },
   
-  declareBlur: function(event) {
-    var el = event.element();
-    el.hasFocus = false;
-    this.refreshFields(el);
+  refreshField: function(fieldName) {
+    var field = this.fields.get(fieldName);
+    var initValue = field.value;
+    field.value = this.range.get(fieldName) ? this.range.get(fieldName).strftime(this.format, this.locale) : '';
+    field.hasFocus && field.value == '' && initValue != '' ? field.addClassName('error') : field.removeClassName('error');
+    field.hasFocus = false;
+    return this;
   },
   
-  deactivate: function() {
-    this.container.select('td').each(function(day) {
-      day.baseClass = null;
-      day.date = null;
-    });
+  validateField: function(fieldName, date) {
+    var error;
+    if((this.earliest && date < this.earliest) || (this.latest && date > this.latest))
+      error = 'hard';
+    else if(fieldName == 'start' && this.range.get('end') && date > this.range.get('end'))
+      error = 'soft';
+    else if(fieldName == 'end' && this.range.get('start') && date < this.range.get('start'))
+      error = 'soft';
+    return error;
   },
   
-  handleClick: function(event) {
+  // Event handling
+  
+  eventClick: function(event) {
     if(!event.element().ancestors) return;
     var el;
-    if(el = event.findElement('a.timeframe_button')) {
-      if(el.hasClassName('disabled')) return;
+    if(el = event.findElement('a.timeframe_button'))
       this.handleButtonClick(event, el);
-    }
   },
   
-  handleMousedown: function(event) {
+  eventMouseDown: function(event) {
     if(!event.element().ancestors) return;
     var el, em;
     if(el = event.findElement('span.clear')) {
       el.down('span').addClassName('active');
       if(em = event.findElement('td.selectable'))
         this.handleDateClick(em, true);
-    }
-    else if(el = event.findElement('td.selectable'))
+    } else if(el = event.findElement('td.selectable'))
       this.handleDateClick(el);
     else return;
   },
   
   handleButtonClick: function(event, element) {
     var el;
-    var movement = this.calendars > 1 ? this.calendars - 1 : 1;
+    var movement = this.months > 1 ? this.months - 1 : 1;
     if(element.hasClassName('next'))
       this.date.setMonth(this.date.getMonth() + movement);
     else if(element.hasClassName('previous'))
@@ -309,17 +270,14 @@ var Timeframe = Class.create({
     else if(element.hasClassName('reset')) {
       this.resetFields();
     }
-    this.populate();
+    this.populate().refreshRange();
   },
   
   resetFields: function() {
-    this.startfield.value = this.startfield.defaultValue || '';
-    this.endfield.value = this.endfield.defaultValue || '';
-    this.date = new Date(this.defaultDate);
-    var startdate = new Date(Date.parse(this.startfield.value)).neutral();
-    this.startdate = (startdate == 'Invalid Date' || startdate == 'NaN') ? null : startdate;
-    var enddate = new Date(Date.parse(this.endfield)).neutral();
-    this.enddate = (enddate == 'Invalid Date' || enddate == 'NaN') ? null : enddate;
+    this.fields.get('start').value = this.fields.get('start').defaultValue || '';
+    this.fields.get('end').value   = this.fields.get('end').defaultValue   || '';
+    this.date = new Date(this.initDate);
+    this.parseField('start').parseField('end');
   },
   
   handleDateClick: function(element, couldClear) {
@@ -328,8 +286,7 @@ var Timeframe = Class.create({
       this.stuck = false;
     else if(couldClear) {
       if(!element.hasClassName('startrange')) return;
-    }
-    else {
+    } else {
       this.stuck = true;
       setTimeout(function() { if(this.mousedown) this.stuck = false; }.bind(this), 200);
     }
@@ -337,19 +294,19 @@ var Timeframe = Class.create({
   },
   
   getPoint: function(date) {
-    if(this.startdate && this.startdate.toString() == date && this.enddate)
-      this.startdrag = this.enddate;
+    if(this.range.get('start') && this.range.get('start').toString() == date && this.range.get('end'))
+      this.startdrag = this.range.get('end');
     else {
       this.clearButton.hide();
-      if(this.enddate && this.enddate.toString() == date)
-        this.startdrag = this.startdate;
+      if(this.range.get('end') && this.range.get('end').toString() == date)
+        this.startdrag = this.range.get('start');
       else
-        this.startdrag = this.startdate = this.enddate = date;
+        this.startdrag = this.range.set('start', this.range.set('end', date));
     }
     this.refreshRange();
   },
   
-  handleMouseover: function(event) {
+  eventMouseOver: function(event) {
     var el;
     if(!this.dragging)
       this.toggleClearButton(event);
@@ -362,12 +319,11 @@ var Timeframe = Class.create({
   toggleClearButton: function(event) {
     var el;
     if(event.element().ancestors && event.findElement('td.selected')) {
-      if(el = this.container.select('#calendar_0 .pre.selected').first());
-      else if(el = this.container.select('.active.selected').first());
+      if(el = this.element.select('#calendar_0 .pre.selected').first());
+      else if(el = this.element.select('.active.selected').first());
       if(el) Element.insert(el, { top: this.clearButton });
       this.clearButton.show().down('span').removeClassName('active');        
-    }
-    else {
+    } else {
       this.clearButton.hide();
     }
   },
@@ -375,28 +331,26 @@ var Timeframe = Class.create({
   extendRange: function(date) {
     this.clearButton.hide();
     if(date > this.startdrag) {
-      this.startdate = this.startdrag;
-      this.enddate = date;
-    }
-    else if(date < this.startdrag) {
-      this.startdate = date;
-      this.enddate = this.startdrag;
-    }
-    else {
-      this.startdate = this.enddate = date;
+      this.range.set('start', this.startdrag);
+      this.range.set('end', date);
+    } else if(date < this.startdrag) {
+      this.range.set('start', date);
+      this.range.set('end', this.startdrag);
+    } else {
+      this.range.set('start', this.range.set('end', date));
     }
     this.refreshRange();
   },
   
-  setPoint: function(event) {
+  eventMouseUp: function(event) {
     if(!this.dragging) return;
     if(!this.stuck) {
       var el;
       this.dragging = false;
       if(el = event.findElement('span.clear span.active')) {
         el.removeClassName('active').up('span').hide();
-        this.startdate = this.enddate = null;
-        this.refreshFields();
+        this.range.set('start', this.range.set('end', null));
+        this.refreshField('start').refreshField('end');
       }
     }
     this.mousedown = false;
@@ -404,55 +358,51 @@ var Timeframe = Class.create({
   },
   
   refreshRange: function() {
-    this.container.select('td').each(function(day) {
+    this.element.select('td').each(function(day) {
       day.writeAttribute('class', day.baseClass);
-      if(this.startdate <= day.date && day.date <= this.enddate) {
+      if(this.range.get('start') <= day.date && day.date <= this.range.get('end')) {
         var baseClass = day.hasClassName('beyond') ? 'beyond_' : day.hasClassName('today') ? 'today_' : null;
         var state = this.stuck || this.mousedown ? 'stuck' : 'selected';
         if(baseClass) day.addClassName(baseClass + state);
         day.addClassName(state);
         var rangeClass = '';
-        if(this.startdate.toString() == day.date) rangeClass += 'start';
-        if(this.enddate.toString() == day.date) rangeClass += 'end';
+        if(this.range.get('start').toString() == day.date) rangeClass += 'start';
+        if(this.range.get('end').toString() == day.date) rangeClass += 'end';
         if(rangeClass.length > 0) day.addClassName(rangeClass + 'range');
       }
-      // Trick Opera into refreshing the selection (FIXME)
       if(Prototype.Browser.Opera) {
-        day.unselectable = 'on';
+        day.unselectable = 'on'; // Trick Opera into refreshing the selection (FIXME)
         day.unselectable = null;
       }
     }.bind(this));
-    if(this.dragging) this.refreshFields();
+    if(this.dragging) this.refreshField('start').refreshField('end');
   },
-  
-  refreshFields: function(field) {
-    var attempt;
-    if(field) attempt = field.value;
-    this.startfield.value = this.startdate ? this.startdate.strftime(this.format) : '';
-    this.endfield.value = this.enddate ? this.enddate.strftime(this.format) : '';
-    this.startfield.removeClassName('error');
-    this.endfield.removeClassName('error');
-    if(field && field.value == '' && attempt != '') field.addClassName('error');
-  },
-  
+
   handleMousemove: function(event) {
-    if(event.findElement('#' + this.container.id + ' td')) window.getSelection().removeAllRanges();
+    if(event.findElement('#' + this.element.id + ' td')) window.getSelection().removeAllRanges(); // More Opera trickery
+  }
+});
+
+Object.extend(Date, {  
+  parseToObject: function(string) {
+    var date = new Date(Date.parse(string));
+    return (date == 'Invalid Date' || date == 'NaN') ? null : date.neutral();
   }
 });
 
 Object.extend(Date.prototype, {
   // modified from http://alternateidea.com/blog/articles/2008/2/8/a-strftime-for-prototype
-  strftime: function(format) {
+  strftime: function(format, locale) {
     var day = this.getDay(), month = this.getMonth();
     var hours = this.getHours(), minutes = this.getMinutes();
     function pad(num) { return num.toPaddedString(2); };
  
     return format.gsub(/\%([aAbBcdHImMpSwyY])/, function(part) {
       switch(part[1]) {
-        case 'a': return Date.weekdays.invoke('substring', 0, 3)[day]; break;
-        case 'A': return Date.weekdays[day]; break;
-        case 'b': return Date.months.invoke('substring', 0, 3)[month]; break;
-        case 'B': return Date.months[month]; break;
+        case 'a': return Localizations.get(locale).get('weekdays').invoke('substring', 0, 3)[day].escapeHTML(); break;
+        case 'A': return Localizations.get(locale).get('weekdays')[day].escapeHTML(); break;
+        case 'b': return Localizations.get(locale).get('months').invoke('substring', 0, 3)[month].escapeHTML(); break;
+        case 'B': return Localizations.get(locale).get('months')[month].escapeHTML(); break;
         case 'c': return this.toString(); break;
         case 'd': return pad(this.getDate()); break;
         case 'H': return pad(hours); break;
@@ -469,11 +419,6 @@ Object.extend(Date.prototype, {
   },
   
   neutral: function() {
-    var neutered = new Date(this);
-    neutered.setHours(12);
-    neutered.setMinutes(0);
-    neutered.setSeconds(0);
-    neutered.setMilliseconds(0);
-    return neutered;
+    return new Date(this.getFullYear(), this.getMonth(), this.getDate(), 12);
   }
 });

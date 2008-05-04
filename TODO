@@ -9,7 +9,7 @@ THINGS TODO (mostly in order of importance)
 
 * Elegant way to drag to months before and after the displayed calendars
 
-* Internationalization
+* More localizations
   
 * Prettier initial styles, especially for non-Safari browsers
   - Just get the reset button generation out of there

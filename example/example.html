@@ -35,20 +35,22 @@
       Options available:
     </h3>
     <dl>
-      <dt><code>calendars</code></dt>
+      <dt><code>months</code></dt>
       <dd>The number of calendar months showing at once (default: <code>2</code>).</dd>
+      <dt><code>locale</code></dt>
+      <dd>This two-character code determines the language and overrides the default <code>format</code> and <code>weekOffset</code> (default: <code>US</code>).</dd>
       <dt><code>format</code></dt>
       <dd>The <a href="http://developer.apple.com/documentation/Darwin/Reference/ManPages/man3/strftime.3.html">strftime</a> format for the dates in the input fields (default: <code>%b %d, %Y</code>).</dd>
-      <dt><code>weekoffset</code></dt>
+      <dt><code>weekOffset</code></dt>
       <dd>The weekday offset (use <code>1</code> to start the week on Monday).</dd>
-      <dt><code>startfield</code>, <code>endfield</code></dt>
-      <dd>Declare the range start and end <code>input</code> tags (by default, these are generated with the timeframe).</dd>
-      <dt><code>previousbutton</code>, <code>todaybutton</code>, <code>nextbutton</code>, <code>resetbutton</code></dt>
-      <dd>Declare the navigational buttons (by default, these are also generated with the timeframe).</dd>
+      <dt><code>startField</code>, <code>endField</code></dt>
+      <dd>Declare the range start and end <code>input</code> tags (by default, these are generated with the Timeframe).</dd>
+      <dt><code>previousButton</code>, <code>todayButton</code>, <code>nextButton</code>, <code>resetButton</code></dt>
+      <dd>Declare the navigational buttons (by default, these are also generated with the Timeframe).</dd>
       <dt><code>earliest</code>, <code>latest</code></dt>
       <dd>The earliest and latest selectable dates (accepts either a <code>Date</code> object or a <code>String</code> that can be parsed with <code>Date.parse()</code>).</dd>
     </dl>
-    <h3>Notes</h3>
+    <h3>Notes:</h3>
     <ul>
       <li>I&rsquo;m just sick of multiple date pickers on the same page.</li>
     </ul>
@@ -56,7 +58,7 @@
       Also!!:
     </h3>
     <p>
-      The <code>startfield</code> and <code>endfield</code> are parsed with <code>Date.parse()</code>, so feel free to use <a href="http://datejs.com/">Datejs</a> for ninja-quick date-parsing.
+      The <code>startField</code> and <code>endField</code> are parsed with <code>Date.parse()</code>, so feel free to use <a href="http://datejs.com/">Datejs</a> for ninja-quick date-parsing.
     </p>
     <h2 id="example_information">
       An example:
@@ -88,10 +90,10 @@
       &lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;
         //&lt;![CDATA[
           new Timeframe(&#x27;calendars&#x27;, {
-            startfield: &#x27;start&#x27;,
-            endfield: &#x27;end&#x27;,
+            startField: &#x27;start&#x27;,
+            endField: &#x27;end&#x27;,
             earliest: new Date(),
-            resetbutton: &#x27;reset&#x27; });
+            resetButton: &#x27;reset&#x27; });
         //]]&gt;
       &lt;/script&gt;
     </code></pre>
@@ -102,6 +104,10 @@
     <p>
       <a href="http://github.com/stephencelis/timeframe">http://github.com/stephencelis/timeframe</a>
     </p>
+    <h3>Acknowledgements:</h3>
+    <ul>
+      <li><a href="http://alternateidea.com">Justin Palmer (&ldquo;Caged&rdquo;)</a>, for <code>Date.prototype.strftime()</code> and Prototype 1.6 optimizations.</li>
+    </ul>
     <p>
       Contact me with questions/comments at
       <script type="text/javascript">
@@ -120,13 +126,14 @@
   </div>
   <script type="text/javascript" charset="utf-8" src="scripts/prototype.js"></script>
   <script type="text/javascript" charset="utf-8" src="../timeframe.js"></script>
+  <script type="text/javascript" charset="utf-8" src="../timeframe_localizations.js"></script>
   <script type="text/javascript" charset="utf-8">
     //<![CDATA[
       new Timeframe('calendars', {
-        startfield: 'start',
-        endfield: 'end',
+        startField: 'start',
+        endField: 'end',
         earliest: new Date(),
-        resetbutton: 'reset' });
+        resetButton: 'reset' });
     //]]>
   </script>
 </body>
