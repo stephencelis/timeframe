@@ -67,6 +67,7 @@
 #calendars table {
   border-collapse: collapse;
   display: inline-block;
+  display: -moz-inline-box;
   font-size: 15px;
   margin: 0 6px 12px;
 }
