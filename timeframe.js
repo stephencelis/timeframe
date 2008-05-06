@@ -383,9 +383,11 @@ var Timeframe = Class.create({
   }
 });
 
-Object.extend(Date, {  
+Object.extend(Date, {
   parseToObject: function(string) {
-    var date = new Date(Date.parse(string));
+    var date = Date.parse(string);
+    if(!date) return null;
+    date = new Date(date);
     return (date == 'Invalid Date' || date == 'NaN') ? null : date.neutral();
   }
 });
