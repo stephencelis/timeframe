@@ -7,14 +7,12 @@
 if(typeof Prototype == 'undefined' || parseFloat(Prototype.Version.substring(0, 3)) < 1.6)
   throw 'Timeframe requires Prototype version 1.6 or greater.';
 
-var Localizations = $H({
-  // More localizations included in 'timeframe_localizations.js'
-  US: $H({
-    format:     '%b %d, %Y',
-    months:     $w('January February March April May June July August September October November December'),
-    weekdays:   $w('Sunday Monday Tuesday Wednesday Thursday Friday Saturday'),
-    weekOffset: 0
-  })
+// Checks for localized Datejs before defaulting to 'en-US'
+var Locale = $H({
+  format:     (typeof Date.CultureInfo == 'undefined' ? '%b %d, %Y' : Date.CultureInfo.formatPatterns.shortDate),
+  monthNames: (typeof Date.CultureInfo == 'undefined' ? $w('January February March April May June July August September October November December') : Date.CultureInfo.monthNames),
+  dayNames:   (typeof Date.CultureInfo == 'undefined' ? $w('Sunday Monday Tuesday Wednesday Thursday Friday Saturday') : Date.CultureInfo.dayNames),
+  weekOffset: (typeof Date.CultureInfo == 'undefined' ? 0 : Date.CultureInfo.firstDayOfWeek)
 });
 
 var Timeframes = [];
@@ -26,14 +24,13 @@ var Timeframe = Class.create({
     Timeframes.push(this);
     
     this.element = $(element);
-    this.options = $H({ months: 2, locale: 'US' }).merge(options || {});;
+    this.options = $H({ months: 2 }).merge(options || {});;
     this.months = this.options.get('months');
-    this.locale = this.options.get('locale').toUpperCase();
     
-    this.weekdayNames = Localizations.get(this.locale).get('weekdays');
-    this.monthNames   = Localizations.get(this.locale).get('months');
-    this.format       = this.options.get('format')     || Localizations.get(this.locale).get('format');
-    this.weekOffset   = this.options.get('weekOffset') || Localizations.get(this.locale).get('weekOffset');
+    this.weekdayNames = Locale.get('dayNames');
+    this.monthNames   = Locale.get('monthNames');
+    this.format       = this.options.get('format')     || Locale.get('format');
+    this.weekOffset   = this.options.get('weekOffset') || Locale.get('weekOffset');
     
     this.buttons = $H({
       previous: $H({ label: '&larr;', element: $(this.options.get('previousButton')) }),
@@ -220,7 +217,10 @@ var Timeframe = Class.create({
   refreshField: function(fieldName) {
     var field = this.fields.get(fieldName);
     var initValue = field.value;
-    field.value = this.range.get(fieldName) ? this.range.get(fieldName).strftime(this.format, this.locale) : '';
+    if(this.range.get(fieldName)) {
+      field.value = typeof Date.CultureInfo == 'undefined' ? this.range.get(fieldName).strftime(this.format) : this.range.get(fieldName).toString(this.format);
+    } else
+      field.value = '';
     field.hasFocus && field.value == '' && initValue != '' ? field.addClassName('error') : field.removeClassName('error');
     field.hasFocus = false;
     return this;
@@ -394,17 +394,17 @@ Object.extend(Date, {
 
 Object.extend(Date.prototype, {
   // modified from http://alternateidea.com/blog/articles/2008/2/8/a-strftime-for-prototype
-  strftime: function(format, locale) {
+  strftime: function(format) {
     var day = this.getDay(), month = this.getMonth();
     var hours = this.getHours(), minutes = this.getMinutes();
     function pad(num) { return num.toPaddedString(2); };
  
     return format.gsub(/\%([aAbBcdHImMpSwyY])/, function(part) {
       switch(part[1]) {
-        case 'a': return Localizations.get(locale).get('weekdays').invoke('substring', 0, 3)[day].escapeHTML(); break;
-        case 'A': return Localizations.get(locale).get('weekdays')[day].escapeHTML(); break;
-        case 'b': return Localizations.get(locale).get('months').invoke('substring', 0, 3)[month].escapeHTML(); break;
-        case 'B': return Localizations.get(locale).get('months')[month].escapeHTML(); break;
+        case 'a': return Locale.get('dayNames').invoke('substring', 0, 3)[day].escapeHTML(); break;
+        case 'A': return Locale.get('dayNames')[day].escapeHTML(); break;
+        case 'b': return Locale.get('monthNames').invoke('substring', 0, 3)[month].escapeHTML(); break;
+        case 'B': return Locale.get('monthNames')[month].escapeHTML(); break;
         case 'c': return this.toString(); break;
         case 'd': return pad(this.getDate()); break;
         case 'H': return pad(hours); break;

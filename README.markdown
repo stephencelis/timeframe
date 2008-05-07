@@ -15,13 +15,10 @@ The code:
 * `months`:
   The number of calendar months showing at once (default: `2`).
 
-* `locale`:
-  This two-character code determines the language and overrides the default 
-  `format` and `weekOffset` (default: `US`).
-
 * `format`:
   The strftime format for the dates in the input fields (default:
-  `%b %d, %Y`).
+  `%b %d, %Y`). (With [Datejs](http://datejs.com), it takes Datejs
+  formatting.)
 
 * `weekOffset`:
   The weekday offset (use `1` to start the week on Monday).
@@ -39,15 +36,16 @@ The code:
   a `String` that can be parsed with `Date.parse()`).
 
 
+### Localization:
+
+Drop in a localized version of [Datejs](http://datejs.com), and it should just
+work. An added bonus is that the text fields will live-parse more nicely! Just
+try "next tues."
+
+
 ### Notes:
 
 * I'm just sick of multiple date pickers on the same page.
-
-
-### Also!!:
-
-The `startField` and `endField` are parsed with `Date.parse()`, so feel free
-to use [Datejs](http://datejs.com) for ninja-quick date-parsing.
 
 
 An example:

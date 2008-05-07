@@ -37,10 +37,8 @@
     <dl>
       <dt><code>months</code></dt>
       <dd>The number of calendar months showing at once (default: <code>2</code>).</dd>
-      <dt><code>locale</code></dt>
-      <dd>This two-character code determines the language and overrides the default <code>format</code> and <code>weekOffset</code> (default: <code>US</code>).</dd>
       <dt><code>format</code></dt>
-      <dd>The <a href="http://developer.apple.com/documentation/Darwin/Reference/ManPages/man3/strftime.3.html">strftime</a> format for the dates in the input fields (default: <code>%b %d, %Y</code>).</dd>
+      <dd>The <a href="http://developer.apple.com/documentation/Darwin/Reference/ManPages/man3/strftime.3.html">strftime</a> format for the dates in the input fields (default: <code>%b %d, %Y</code>). (With <a href="http://datejs.com/">Datejs</a>, it takes Datejs formatting.)</dd>
       <dt><code>weekOffset</code></dt>
       <dd>The weekday offset (use <code>1</code> to start the week on Monday).</dd>
       <dt><code>startField</code>, <code>endField</code></dt>
@@ -50,16 +48,16 @@
       <dt><code>earliest</code>, <code>latest</code></dt>
       <dd>The earliest and latest selectable dates (accepts either a <code>Date</code> object or a <code>String</code> that can be parsed with <code>Date.parse()</code>).</dd>
     </dl>
-    <h3>Notes:</h3>
+    <h3>Localization:</h3>
+    <p>
+      Drop in a localized version of <a href="http://datejs.com">Datejs</a>, and it should just work. An added bonus is that the text fields will live-parse more nicely! Just try &ldquo;next tues.&rdquo;
+    </p>
+    <h3>
+      Notes:
+    </h3>
     <ul>
       <li>I&rsquo;m just sick of multiple date pickers on the same page.</li>
     </ul>
-    <h3>
-      Also!!:
-    </h3>
-    <p>
-      The <code>startField</code> and <code>endField</code> are parsed with <code>Date.parse()</code>, so feel free to use <a href="http://datejs.com/">Datejs</a> for ninja-quick date-parsing.
-    </p>
     <h2 id="example_information">
       An example:
     </h2>
@@ -126,7 +124,6 @@
   </div>
   <script type="text/javascript" charset="utf-8" src="scripts/prototype.js"></script>
   <script type="text/javascript" charset="utf-8" src="../timeframe.js"></script>
-  <script type="text/javascript" charset="utf-8" src="../timeframe_localizations.js"></script>
   <script type="text/javascript" charset="utf-8">
     //<![CDATA[
       new Timeframe('calendars', {
