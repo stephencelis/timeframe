@@ -19,19 +19,19 @@ var Timeframes = [];
 
 var Timeframe = Class.create({
   Version: '0.2',
-  
+
   initialize: function(element, options) {
     Timeframes.push(this);
-    
+
     this.element = $(element);
     this.options = $H({ months: 2 }).merge(options || {});;
     this.months = this.options.get('months');
-    
+
     this.weekdayNames = Locale.get('dayNames');
     this.monthNames   = Locale.get('monthNames');
     this.format       = this.options.get('format')     || Locale.get('format');
     this.weekOffset   = this.options.get('weekOffset') || Locale.get('weekOffset');
-    
+
     this.buttons = $H({
       previous: $H({ label: '&larr;', element: $(this.options.get('previousButton')) }),
       today:    $H({ label: 'T',      element: $(this.options.get('todayButton')) }),
@@ -39,25 +39,25 @@ var Timeframe = Class.create({
       next:     $H({ label: '&rarr;', element: $(this.options.get('nextButton')) })
     })
     this.fields = $H({ start: $(this.options.get('startField')), end: $(this.options.get('endField')) });
-    
+
     this.range = $H({});
     this._buildButtons()._buildFields();
     this.earliest = Date.parseToObject(this.options.get('earliest'));
     this.latest   = Date.parseToObject(this.options.get('latest'));
-    
-    this.calendars = [];    
+
+    this.calendars = [];
     this.element.insert(new Element('div', { id: 'calendars_container' }));
     this.months.times(function(month) { this.createCalendar(month) }.bind(this));
-    
+
     this.register().populate().refreshRange();
   },
-  
+
   // Scaffolding
-  
+
   createCalendar: function() {
     var calendar = new Element('table', { id: 'calendar_' + this.calendars.length, border: 0, cellspacing: 0, cellpadding: 5 });
     calendar.insert(new Element('caption'));
-    
+
     var head = new Element('thead');
     var row  = new Element('tr');
     this.weekdayNames.length.times(function(column) {
@@ -67,7 +67,7 @@ var Timeframe = Class.create({
     }.bind(this));
     head.insert(row);
     calendar.insert(head);
-    
+
     var body = new Element('tbody');
     (6).times(function(rowNumber) {
       var row = new Element('tr');
@@ -78,27 +78,27 @@ var Timeframe = Class.create({
       body.insert(row);
     }.bind(this));
     calendar.insert(body);
-    
+
     this.element.down('div#calendars_container').insert(calendar);
     this.calendars.push(calendar);
     this.months = this.calendars.length;
     return this;
   },
-  
+
   destroyCalendar: function() {
     this.calendars.pop().remove();
     this.months = this.calendars.length;
     return this;
   },
-  
+
   populate: function() {
     var month = this.date.neutral();
     month.setDate(1);
-    this.months.times(function(n) {      
+    this.months.times(function(n) {
       var calendar = $('calendar_' + n);
       var caption = calendar.select('caption').first();
       caption.update(this.monthNames[month.getMonth()] + ' ' + month.getFullYear());
-      
+
       var iterator = new Date(month);
       var offset = (iterator.getDay() - this.weekOffset) % 7;
       var inactive = offset > 0 ? 'pre beyond' : false;
@@ -107,7 +107,7 @@ var Timeframe = Class.create({
         iterator.setDate(iterator.getDate() - 7);
         if(iterator.getDate() > 1) inactive = 'pre beyond';
       }
-      
+
       calendar.select('td').each(function(day) {
         day.date = new Date(iterator); // Is this expensive (we unload these later)? We could store the epoch time instead.
         day.update(day.date.getDate()).writeAttribute('class', inactive || 'active');
@@ -117,16 +117,16 @@ var Timeframe = Class.create({
           day.addClassName('selectable');
         if(iterator.toString() === new Date().neutral().toString()) day.addClassName('today');
         day.baseClass = day.readAttribute('class');
-        
+
         iterator.setDate(iterator.getDate() + 1);
         if(iterator.getDate() == 1) inactive = inactive ? false : 'post beyond';
       }.bind(this));
-      
+
       month.setMonth(month.getMonth() + 1);
     }.bind(this));
     return this;
   },
-  
+
   _buildButtons: function() {
     var buttonList = new Element('ul', { id: 'timeframe_menu' });
     this.buttons.each(function(pair) {
@@ -145,7 +145,7 @@ var Timeframe = Class.create({
     this.clearButton = new Element('span', { className: 'clear' }).update(new Element('span').update('X'));
     return this;
   },
-  
+
   _buildFields: function() {
     var fieldset = new Element('div', { id: 'timeframe_fields' });
     this.fields.each(function(pair) {
@@ -163,9 +163,9 @@ var Timeframe = Class.create({
     this.parseField('start').refreshField('start').parseField('end').refreshField('end').initDate = new Date(this.date);
     return this;
   },
-  
+
   // Event registration
-  
+
   register: function() {
     document.observe('click', this.eventClick.bind(this));
     document.observe('mousedown', this.eventMouseDown.bind(this));
@@ -175,11 +175,11 @@ var Timeframe = Class.create({
     if(Prototype.Browser.Opera) document.observe('mousemove', this.handleMousemove.bind(this));
     return this._registerFieldObserver('start')._registerFieldObserver('end')._disableTextSelection();
   },
-  
+
   unregister: function() {
     this.element.select('td').each(function(day) { day.date = day.baseClass = null; });
   },
-  
+
   _registerFieldObserver: function(fieldName) {
     var field = this.fields.get(fieldName);
     field.observe('focus', function() { field.hasFocus = true; this.parseField(fieldName, true); }.bind(this));
@@ -187,7 +187,7 @@ var Timeframe = Class.create({
     new Form.Element.Observer(field, 0.2, function(element, value) { if(element.hasFocus) this.parseField(fieldName, true); }.bind(this));
     return this;
   },
-  
+
   _disableTextSelection: function() {
     this.element.onselectstart       = function() { return false; };
     this.element.unselectable        = 'on';
@@ -195,9 +195,9 @@ var Timeframe = Class.create({
     this.element.style.cursor        = 'default';
     return this;
   },
-  
+
   // Fields
-  
+
   parseField: function(fieldName, populate) {
     var field = this.fields.get(fieldName);
     var date = Date.parseToObject(this.fields.get(fieldName).value);
@@ -213,7 +213,7 @@ var Timeframe = Class.create({
     this.refreshRange();
     return this;
   },
-  
+
   refreshField: function(fieldName) {
     var field = this.fields.get(fieldName);
     var initValue = field.value;
@@ -225,8 +225,9 @@ var Timeframe = Class.create({
     field.hasFocus = false;
     return this;
   },
-  
+
   validateField: function(fieldName, date) {
+    if(!date) return;
     var error;
     if((this.earliest && date < this.earliest) || (this.latest && date > this.latest))
       error = 'hard';
@@ -236,16 +237,16 @@ var Timeframe = Class.create({
       error = 'soft';
     return error;
   },
-  
+
   // Event handling
-  
+
   eventClick: function(event) {
     if(!event.element().ancestors) return;
     var el;
     if(el = event.findElement('a.timeframe_button'))
       this.handleButtonClick(event, el);
   },
-  
+
   eventMouseDown: function(event) {
     if(!event.element().ancestors) return;
     var el, em;
@@ -257,7 +258,7 @@ var Timeframe = Class.create({
       this.handleDateClick(el);
     else return;
   },
-  
+
   handleButtonClick: function(event, element) {
     var el;
     var movement = this.months > 1 ? this.months - 1 : 1;
@@ -271,14 +272,14 @@ var Timeframe = Class.create({
       this.reset();
     this.populate().refreshRange();
   },
-  
+
   reset: function() {
     this.fields.get('start').value = this.fields.get('start').defaultValue || '';
     this.fields.get('end').value   = this.fields.get('end').defaultValue   || '';
     this.date = new Date(this.initDate);
     this.parseField('start').parseField('end');
   },
-  
+
   handleDateClick: function(element, couldClear) {
     this.mousedown = this.dragging = true;
     if(this.stuck)
@@ -291,7 +292,7 @@ var Timeframe = Class.create({
     }
     this.getPoint(element.date);
   },
-  
+
   getPoint: function(date) {
     if(this.range.get('start') && this.range.get('start').toString() == date && this.range.get('end'))
       this.startdrag = this.range.get('end');
@@ -304,7 +305,7 @@ var Timeframe = Class.create({
     }
     this.refreshRange();
   },
-  
+
   eventMouseOver: function(event) {
     var el;
     if(!this.dragging)
@@ -314,7 +315,7 @@ var Timeframe = Class.create({
       this.extendRange(el.date);
     else this.toggleClearButton(event);
   },
-  
+
   toggleClearButton: function(event) {
     var el;
     if(event.element().ancestors && event.findElement('td.selected')) {
@@ -326,7 +327,7 @@ var Timeframe = Class.create({
       this.clearButton.hide();
     }
   },
-  
+
   extendRange: function(date) {
     this.clearButton.hide();
     if(date > this.startdrag) {
@@ -340,7 +341,7 @@ var Timeframe = Class.create({
     }
     this.refreshRange();
   },
-  
+
   eventMouseUp: function(event) {
     if(!this.dragging) return;
     if(!this.stuck) {
@@ -355,11 +356,11 @@ var Timeframe = Class.create({
     this.mousedown = false;
     this.refreshRange();
   },
-  
+
   refreshRange: function() {
     this.element.select('td').each(function(day) {
       day.writeAttribute('class', day.baseClass);
-      if(this.range.get('start') <= day.date && day.date <= this.range.get('end')) {
+      if(this.range.get('start') && this.range.get('end') && this.range.get('start') <= day.date && day.date <= this.range.get('end')) {
         var baseClass = day.hasClassName('beyond') ? 'beyond_' : day.hasClassName('today') ? 'today_' : null;
         var state = this.stuck || this.mousedown ? 'stuck' : 'selected';
         if(baseClass) day.addClassName(baseClass + state);
@@ -397,7 +398,7 @@ Object.extend(Date.prototype, {
     var day = this.getDay(), month = this.getMonth();
     var hours = this.getHours(), minutes = this.getMinutes();
     function pad(num) { return num.toPaddedString(2); };
- 
+
     return format.gsub(/\%([aAbBcdHImMpSwyY])/, function(part) {
       switch(part[1]) {
         case 'a': return Locale.get('dayNames').invoke('substring', 0, 3)[day].escapeHTML(); break;
@@ -418,7 +419,7 @@ Object.extend(Date.prototype, {
       }
     }.bind(this));
   },
-  
+
   neutral: function() {
     return new Date(this.getFullYear(), this.getMonth(), this.getDate(), 12);
   }
