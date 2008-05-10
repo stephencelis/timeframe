@@ -267,13 +267,12 @@ var Timeframe = Class.create({
       this.date.setMonth(this.date.getMonth() - movement);
     else if(element.hasClassName('today'))
       this.date = new Date();
-    else if(element.hasClassName('reset')) {
-      this.resetFields();
-    }
+    else if(element.hasClassName('reset'))
+      this.reset();
     this.populate().refreshRange();
   },
   
-  resetFields: function() {
+  reset: function() {
     this.fields.get('start').value = this.fields.get('start').defaultValue || '';
     this.fields.get('end').value   = this.fields.get('end').defaultValue   || '';
     this.date = new Date(this.initDate);
