@@ -1,0 +1,495 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Timeframe unit test file</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+  <script src="../example/scripts/prototype.js" type="text/javascript"></script>
+  <script src="unittest.js" type="text/javascript"></script>
+  <script src="../timeframe.js" type="text/javascript"></script>
+
+  <link rel="stylesheet" href="unittest.css" type="text/css"/>
+</head>
+<body>
+
+<div id="content">
+
+  <div id="header">
+    <h1>Timeframe unit test file</h1>
+    <p>
+      This file tests <strong>timeframe.js</strong>.
+    </p>
+  </div>
+
+  <!-- Log output -->
+  <div id="testlog"></div>
+
+  <div id="timeframe"></div>
+  <div id="timeframe_2"></div>
+  <div id="previous"></div>
+  <div id="next"></div>
+  <div id="today"></div>
+  <div id="reset"></div>
+  <input type="text" name="start" value="January 9, 2008" id="start"/>
+  <input type="text" name="end" value="January 23, 2008" id="end"/>
+</div>
+
+<script type="text/javascript">
+// <![CDATA[
+
+  var TimeframeHelpers = {
+
+    doubleClickDrag: function(hash) {
+      var start = hash.from, end = hash.to;
+      Event.simulateMouse(start, 'mousedown');
+      Event.simulateMouse(start, 'mouseup');
+      Event.simulateMouse(end, 'mouseover');
+      Event.simulateMouse(end, 'mousedown');
+      Event.simulateMouse(end, 'mouseup');
+    },
+    
+    clickDrag: function(testRunner, hash) {
+      var start = hash.from, end = hash.to;
+      Event.simulateMouse(start, 'mousedown');
+      testRunner.wait(250, function() { with(this) {
+        Event.simulateMouse(end, 'mouseover');
+        Event.simulateMouse(end, 'mouseup');
+      }});
+    },
+    
+  }
+
+  new Test.Unit.Runner({
+
+    teardown: function() {
+      $('timeframe').update('');
+      $('timeframe_2').update('');
+      $('start').setValue($('start').defaultValue);
+      $('end').setValue($('end').defaultValue);
+      Timeframes = [];
+    },
+
+    testTimeframe: function() { with(this) {
+      var timeframe = new Timeframe('timeframe');
+      assertInstanceOf(Timeframe, timeframe);
+      assertEqual(1, Timeframes.length);
+      assertIdentical(timeframe, Timeframes.first());
+    }},
+
+    testMultipleTimeframes: function() { with(this) {
+      assertEqual(0, Timeframes.length);
+      new Timeframe('timeframe');
+      new Timeframe('timeframe_2');
+      assertEqual(2, Timeframes.length);
+    }},
+
+    testAttributesAndDefaultOptionsSet: function() { with(this) {
+      var timeframe = new Timeframe('timeframe');
+      assertNotNull(timeframe.element);
+      assertEqual(timeframe.options.get('months'), timeframe.months);
+      assertEqual(2, timeframe.months); // default
+      assertEqual(7, timeframe.weekdayNames.length);
+      assertEqual(12, timeframe.monthNames.length);
+      assertEqual('%b %d, %Y', timeframe.format); // default
+      assertEqual(0, timeframe.weekOffset); // default
+      assertEqual(4, timeframe.buttons.keys().length);
+      assertEqual(2, timeframe.fields.keys().length);
+      assertEqual(2, timeframe.range.keys().length);
+      timeframe.range.each(function(range) { assertIdentical(range.value, null); });
+      assertIdentical(timeframe.earliest, null);
+      assertIdentical(timeframe.latest, null);
+      assertEqual(timeframe.months, timeframe.calendars.length);
+      var i = 0;
+      timeframe.calendars.each(function(table) { assertIdentical(table, timeframe.element.select('table')[i++]) });
+      assertInstanceOf(Date, timeframe.date);
+    }},
+
+    testMonthsOption: function() { with(this) {
+      var timeframe = new Timeframe('timeframe', { months: 5 });
+      assertEqual(5, timeframe.months);
+      assertEqual(timeframe.months, timeframe.calendars.length);
+      assertEqual(timeframe.months, timeframe.element.select('table').length);
+    }},
+
+    testCreateCalendar: function() { with(this) {
+      var timeframe = new Timeframe('timeframe', { months: 2 });
+      assertIdentical(timeframe, timeframe.createCalendar()); // assert returns timeframe
+      assertEqual(3, timeframe.months);
+      assertEqual(timeframe.months, timeframe.calendars.length);
+      assertEqual(timeframe.months, timeframe.element.select('table').length);
+    }},
+
+    testDestroyCalendar: function() { with(this) {
+      var timeframe = new Timeframe('timeframe', { months: 2 });
+      assertIdentical(timeframe, timeframe.destroyCalendar()); // assert returns timeframe
+      assertEqual(1, timeframe.months);
+      assertEqual(timeframe.months, timeframe.calendars.length);
+      assertEqual(timeframe.months, timeframe.element.select('table').length);
+    }},
+
+    testElementsCreated: function() { with(this) {
+      var timeframe = new Timeframe('timeframe', { months: 1 });
+      assertEqual(1, timeframe.element.select('table').length);
+      assertEqual(1, timeframe.element.select('thead').length);
+      assertEqual(1, timeframe.element.select('caption').length);
+      assertEqual(1, timeframe.element.select('tbody').length);
+      assertEqual(7, timeframe.element.select('tr').length);
+      assertEqual(7, timeframe.element.select('th').length);
+      assertEqual(42, timeframe.element.select('td').length);
+      assertNotNull(timeframe.clearButton);
+      timeframe.buttons.each(function(button) { assertNotNull(button.value.get('element')) });
+      timeframe.fields.each(function(field) { assertEqual('INPUT', field.value.tagName.toUpperCase()); });
+    }},
+
+    testTableElementsPopulated: function() { with(this) {
+      var timeframe = new Timeframe('timeframe');
+      assertEqual(new Date().strftime('%B %Y'), timeframe.element.select('caption').first().innerHTML);
+      assertEqual(timeframe.weekdayNames[timeframe.weekOffset][0], timeframe.element.select('th').first().innerHTML);
+      var days = timeframe.element.select('td');
+      var midMonthDay = days[20]
+      assert(parseInt(midMonthDay.innerHTML) > 0);
+      assert(midMonthDay.hasClassName('active'));
+      assert(midMonthDay.hasClassName('selectable'));
+      assert(days.last().hasClassName('post'));
+      assertInstanceOf(Date, midMonthDay.date);
+    }},
+
+    testFormatOption: function() { with(this) {
+      var format = '%d/%b/%Y';
+      var timeframe = new Timeframe('timeframe', { format: format, startField: 'start', endField: 'end' });
+      assertEqual(timeframe.range.get('start').strftime(format), $('start').value);
+    }},
+
+    testWeekOffsetOption: function() { with(this) {
+      var timeframe = new Timeframe('timeframe', { weekOffset: 1 });
+      assertEqual(1, timeframe.weekOffset);
+      assertEqual(timeframe.weekdayNames[timeframe.weekOffset][0], timeframe.element.select('th').first().innerHTML);
+    }},
+
+    testButtonAssignment: function() { with(this) {
+      var timeframe = new Timeframe('timeframe', {
+        previousButton: 'previous', todayButton: 'today', nextButton: 'next', resetButton: 'reset'
+      });
+      var p = $('previous'), t = $('today'), n = $('next'), r = $('reset');
+      assertIdentical(p, timeframe.buttons.get('previous').get('element'));
+      assertIdentical(t, timeframe.buttons.get('today').get('element'));
+      assertIdentical(n, timeframe.buttons.get('next').get('element'));
+      assertIdentical(r, timeframe.buttons.get('reset').get('element'));
+      assert(p.hasClassName('previous'));
+      assert(t.hasClassName('today'));
+      assert(n.hasClassName('next'));
+      assert(r.hasClassName('reset'));
+      [p, t, n, r].each(function(button) { assert(button.hasClassName('timeframe_button')); });
+    }},
+
+    testFieldAssignment: function() { with(this) {
+      var timeframe = new Timeframe('timeframe', { startField: 'start', endField: 'end' });
+      var s = $('start'), e = $('end');
+      assertIdentical(s, timeframe.fields.get('start'));
+      assertIdentical(e, timeframe.fields.get('end'));
+      [s, e].each(function(field) { assert(field.hasClassName('timeframe_field')); });
+    }},
+
+    testPrepopulatedFieldParsing: function() { with(this) {
+      var timeframe = new Timeframe('timeframe', { startField: 'start', endField: 'end' });
+      assertEqual('January 2008', timeframe.element.select('caption').first().innerHTML);
+      assertInstanceOf(Date, timeframe.range.get('start'));
+      assertInstanceOf(Date, timeframe.range.get('end'));
+      assertEqual(new Date(2008, 0, 9).neutral().toString(), timeframe.range.get('start').toString());
+    }},
+
+    testLiveFieldParsing: function() { with(this) {
+      var timeframe = new Timeframe('timeframe', { startField: 'start', endField: 'end' });
+      $('start').focus();
+      assert($('start').hasFocus);
+      $('start').setValue('');
+      Event.simulateKeys('start', 'april 20 2008');
+      assertEqual('april 20 2008', $('start').value)
+      wait(250, function() { with(this) { // allow time for observer to parse
+        assertEqual(20, timeframe.range.get('start').getDate());
+        $('start').blur();
+        assert(!$('start').hasFocus);
+        assertEqual('Apr 20, 2008', $('start').value);
+      }});
+    }},
+
+    testFieldValidated: function() { with(this) {
+      var timeframe = new Timeframe('timeframe', { earliest: 'August 19, 2008' });
+      var startField = timeframe.fields.get('start');
+      startField.focus();
+      Event.simulateKeys(startField, 'asdasd');
+      startField.blur();
+      assert(startField.hasClassName('error')); // bad parsing
+      
+      startField.focus();
+      assert(!startField.hasClassName('error'));
+      Event.simulateKeys(startField, 'April 19, 2008');
+      startField.blur();
+      assert(startField.hasClassName('error')); // bad date
+    }},
+
+    testPreviousButtonClick: function() { with(this) {
+      var timeframe = new Timeframe('timeframe');
+      assertEqual(timeframe.date.toString(), timeframe.initDate.toString());
+      Event.simulateMouse(timeframe.buttons.get('previous').get('element'), 'click');
+      var previousMonth = new Date(timeframe.initDate);
+      previousMonth.setMonth(previousMonth.getMonth() - 1);
+      assertEqual(previousMonth.toString(), timeframe.date.toString());
+    }},
+
+    testNextButtonClick: function() { with(this) {
+      var timeframe = new Timeframe('timeframe', { months: 3 });
+      assertEqual(timeframe.date.toString(), timeframe.initDate.toString());
+      Event.simulateMouse(timeframe.buttons.get('next').get('element'), 'click');
+      var nextMonth = new Date(timeframe.initDate);
+      nextMonth.setMonth(nextMonth.getMonth() + 2); // travel 2 forward
+      assertEqual(nextMonth.toString(), timeframe.date.toString());
+    }},
+
+    testTodayButtonClick: function() { with(this) {
+      var timeframe = new Timeframe('timeframe', { startField: 'start', endField: 'end' });
+      var timeframeMonth = new Date(timeframe.date).neutral();
+      timeframeMonth.setDate(1);
+      var thisMonth = new Date().neutral();
+      thisMonth.setDate(1);
+      assertNotEqual(thisMonth.toString(), timeframeMonth.toString());
+      Event.simulateMouse(timeframe.buttons.get('today').get('element'), 'click');
+      timeframeMonth = new Date(timeframe.date).neutral();
+      timeframeMonth.setDate(1);
+      assertEqual(thisMonth.toString(), timeframeMonth.toString());
+    }},
+
+    testResetButtonClick: function() { with(this) {
+      var timeframeWithDefault = new Timeframe('timeframe', { startField: 'start', endField: 'end' });
+      timeframeWithDefault.clearRange();
+      assertNull(timeframeWithDefault.range.get('start'));
+      Event.simulateMouse(timeframeWithDefault.buttons.get('reset').get('element'), 'click');
+      assertInstanceOf(Date, timeframeWithDefault.range.get('start'));
+      assertEqual(timeframeWithDefault.range.get('start').strftime(timeframeWithDefault.format), $('start').value);
+
+      var timeframeWithoutDefault = new Timeframe('timeframe_2');
+      assertNull(timeframeWithoutDefault.range.get('end'));
+      var days = timeframeWithoutDefault.element.select('td');
+      TimeframeHelpers.doubleClickDrag({ from: days.first(), to: days.last() });
+      assertInstanceOf(Date, timeframeWithoutDefault.range.get('end'))
+      Event.simulateMouse(timeframeWithoutDefault.buttons.get('reset').get('element'), 'click');
+      assertNull(timeframeWithoutDefault.range.get('end'));
+    }},
+
+    testClearButtonClick: function() { with(this) {      
+      var timeframe = new Timeframe('timeframe', { startField: 'start', endField: 'end' });
+      assert(!timeframe.clearButton.parentNode); // assert(Not)Visible was failing
+
+      var selectedDate = timeframe.element.select('td.selected').first();
+      var unselectedDate = timeframe.element.select('td').first();
+
+      // test hover visibility
+      Event.simulateMouse(selectedDate, 'mouseover');
+      assert(timeframe.clearButton.visible() && timeframe.clearButton.parentNode);
+      Event.simulateMouse(unselectedDate, 'mouseover');
+      assert(!timeframe.clearButton.visible());
+
+      // test mousedown active state
+      Event.simulateMouse(selectedDate, 'mouseover');
+      var innerClearButton = timeframe.clearButton.select('span').first();
+      assert(!innerClearButton.hasClassName('active'));
+      Event.simulateMouse(innerClearButton, 'mousedown');
+      assert(innerClearButton.hasClassName('active'));
+
+      // test clear range
+      assertInstanceOf(Date, timeframe.range.get('start'));
+      Event.simulateMouse(innerClearButton, 'mouseup');
+      assertNull(timeframe.range.get('start'));
+      assertEqual('', timeframe.fields.get('start').value);
+      assert(!timeframe.clearButton.visible());
+    }},
+
+    testClickAndDragDateSettingForward: function() { with(this) {
+      var timeframe = new Timeframe('timeframe');
+
+      // assert properties null
+      assertNull(timeframe.range.get('start'));
+      assertNull(timeframe.range.get('end'));
+      assertNull(timeframe.mousedown);
+      assertNull(timeframe.stuck);
+      assertNull(timeframe.startdrag);
+
+      var date1 = timeframe.element.select('td')[10];
+      Event.simulateMouse(date1, 'mousedown');
+      assertInstanceOf(Date, timeframe.range.get('start'));
+      assertEqual(timeframe.range.get('start'), timeframe.range.get('end'));
+      assertEqual(timeframe.range.get('end'), date1.date);
+      assertEqual(date1.date, timeframe.startdrag);
+
+      // assert properties true
+      assert(timeframe.mousedown);
+      assert(timeframe.stuck);
+      assert(date1.hasClassName('stuck'));
+
+      wait(250, function() { with(this) {
+        // assert no longer stuck
+        assert(timeframe.mousedown);
+        assert(!timeframe.stuck);
+        assert(date1.hasClassName('stuck'));
+
+        var date2 = timeframe.element.select('td')[20];
+        Event.simulateMouse(date2, 'mouseover');
+        assertEqual(timeframe.range.get('end'), date2.date);
+        assertNotEqual(timeframe.range.get('start'), timeframe.range.get('end'));
+        assertEqual(timeframe.startdrag, timeframe.range.get('start'));
+
+        Event.simulateMouse(date2, 'mouseup');
+        assert(!timeframe.mousedown);
+        assert(!date1.hasClassName('stuck'));
+      }});
+    }},
+
+    testTwoClickDateSettingBackward: function() { with(this) {
+      var timeframe = new Timeframe('timeframe');
+
+      var date2 = timeframe.element.select('td')[25];
+      assertInstanceOf(Date, date2.date);
+
+      Event.simulateMouse(date2, 'mousedown');
+      assert(timeframe.mousedown);
+      assert(timeframe.stuck);
+      Event.simulateMouse(date2, 'mouseup');
+      assert(!timeframe.mousedown);
+      assert(timeframe.stuck);
+
+      wait(250, function() { with(this) {
+        // assert still stuck
+        assert(timeframe.stuck);
+        var date1 = timeframe.element.select('td')[15];
+        assertInstanceOf(Date, date1.date);
+        Event.simulateMouse(date1, 'mouseover');
+        assertEqual(timeframe.range.get('start'), date1.date);
+        assertEqual(timeframe.range.get('end'), date2.date);
+        assertEqual(date2.date, timeframe.startdrag);
+
+        // assert no longer stuck
+        Event.simulateMouse(date1, 'mousedown');
+        Event.simulateMouse(date1, 'mouseup');
+        assert(!timeframe.stuck);
+        var date3 = timeframe.element.select('td')[20];
+        Event.simulateMouse(date3, 'mouseover');
+        assertEqual(timeframe.range.get('start'), date1.date);
+        assertEqual(timeframe.range.get('end'), date2.date);
+      }});
+    }},
+
+    testResizeRangeStartToLeft: function() { with(this) {
+      var timeframe = new Timeframe('timeframe', { startField: 'start', endField: 'end' });
+      var date1 = timeframe.element.select('td.startrange').first(), date2 = timeframe.element.select('td.endrange').first();
+      var earlierDate = date1.up().select('td').first();
+      assertNotEqual(date1, earlierDate);
+      assert(earlierDate.date < date1.date);
+
+      TimeframeHelpers.doubleClickDrag({ from: date1, to: earlierDate });
+
+      assertEqual(earlierDate.date, timeframe.range.get('start')); // start date moved
+      assert(!date1.hasClassName('startrange'));
+      assert(earlierDate.hasClassName('startrange'));
+      assertEqual(date2.date.toString(), timeframe.range.get('end').toString()); // end date is still the end date
+    }},
+
+    testResizeEndToLeft: function() { with(this) {
+      var timeframe = new Timeframe('timeframe', { startField: 'start', endField: 'end' });
+      var date1 = timeframe.element.select('td.startrange').first(), date2 = timeframe.element.select('td.endrange').first();
+      var middleDate = date2.up().select('td').first();
+      assertNotEqual(date2, middleDate);
+      assert(middleDate.date < date2.date);
+
+      TimeframeHelpers.doubleClickDrag({ from: date2, to: middleDate });
+
+      assertEqual(middleDate.date, timeframe.range.get('end'));
+      assert(!date2.hasClassName('endrange'));
+      assert(!date2.hasClassName('selected'));
+      assert(middleDate.hasClassName('endrange'));
+      assert(middleDate.hasClassName('selected'));
+      assertEqual(date1.date.toString(), timeframe.range.get('start').toString()) // new start date is still the start date
+    }},
+
+    testFieldAndClassRefreshing: function() { with(this) {
+      var timeframe = new Timeframe('timeframe');
+      var days = timeframe.element.select('td');
+      assertEqual('', timeframe.fields.get('start').value);
+      assertEqual('', timeframe.fields.get('end').value);
+
+      Event.simulateMouse(days[15], 'mousedown');
+      assert(days[15].hasClassName('startendrange'));
+      assertEqual(days[15].date.strftime(timeframe.format), timeframe.fields.get('start').value);
+      assertEqual(days[15].date.strftime(timeframe.format), timeframe.fields.get('end').value);
+
+      Event.simulateMouse(days[20], 'mouseover');
+      assertEqual(days[15].date.strftime(timeframe.format), timeframe.fields.get('start').value);
+      assertEqual(days[20].date.strftime(timeframe.format), timeframe.fields.get('end').value);
+      // test classNames refresh
+      assert(days[15].hasClassName('startrange'));
+      assert(!days[15].hasClassName('startendrange'));
+      assert(days[20].hasClassName('endrange'));
+
+      Event.simulateMouse(days[10], 'mouseover');
+      assertEqual(days[10].date.strftime(timeframe.format), timeframe.fields.get('start').value);
+      assertEqual(days[15].date.strftime(timeframe.format), timeframe.fields.get('end').value);
+
+      Event.simulateMouse(days[15], 'mouseover');
+      assertEqual(1, timeframe.element.select('td.startendrange').length);
+      assertEqual(1, timeframe.element.select('td.stuck').length);
+      assertEqual(0, timeframe.element.select('td.selected').length);
+      assertEqual(0, timeframe.element.select('td.startrange').length);
+      assertEqual(0, timeframe.element.select('td.endrange').length);
+      wait(250, function() { with(this) {
+        Event.simulateMouse(days[15], 'mouseup');
+        assertEqual(0, timeframe.element.select('td.stuck').length);
+        assertEqual(1, timeframe.element.select('td.selected').length);
+      }});
+    }},
+
+    testEarliest: function() { with(this) {
+      var timeframe = new Timeframe('timeframe', {
+        startField: 'start', endField: 'end', earliest: 'January 7, 2008'
+      });
+      assert(timeframe.element.select('td').first().hasClassName('unselectable'));
+      assert(!timeframe.element.select('td').last().hasClassName('unselectable'));
+    }},
+
+    testLatest: function() { with(this) {
+      var timeframe = new Timeframe('timeframe', {
+        startField: 'start', endField: 'end', latest: Date.parseToObject('January 25, 2008')
+      });
+      assert(timeframe.element.select('td').last().hasClassName('unselectable'));
+      assert(!timeframe.element.select('td').first().hasClassName('unselectable'));
+    }},
+
+    testCantSelectUnselectableDate: function() { with(this) {
+      var midMonth = new Date();
+      midMonth.setDate(15);
+      var timeframe = new Timeframe('timeframe', { latest: midMonth });
+      var unselectableDate = timeframe.element.select('td.unselectable').first();
+      var selectableDate = timeframe.element.select('td.selectable').first();
+      TimeframeHelpers.clickDrag(this, { from: unselectableDate, to: selectableDate });
+      assertNull(timeframe.range.get('start'));
+      TimeframeHelpers.clickDrag(this, { from: selectableDate, to: unselectableDate });
+      assertInstanceOf(Date, timeframe.range.get('start'));
+      assert(unselectableDate.date > timeframe.range.get('end'));
+    }},
+
+    testDateClassParsing: function() { with(this) {
+      assertNull(Date.parseToObject('Unintelligible Query'));
+      assertInstanceOf(Date, Date.parseToObject('April 30, 2008'));
+    }},
+
+    testDatePrototypeNeutralizing: function() { with(this) {
+      var neutralDate = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 12);
+      assertInstanceOf(Date, neutralDate);
+      assertEqual(neutralDate.toString(), new Date().neutral().toString());
+    }},
+    
+    // TODO: test Datejs support
+
+  }, { testLog: 'testlog' });
+// ]]>
+</script>
+</body>
+</html>

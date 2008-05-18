@@ -94,8 +94,7 @@ var Timeframe = Class.create({
   populate: function() {
     var month = this.date.neutral();
     month.setDate(1);
-    this.months.times(function(n) {
-      var calendar = $('calendar_' + n);
+    this.calendars.each(function(calendar) {
       var caption = calendar.select('caption').first();
       caption.update(this.monthNames[month.getMonth()] + ' ' + month.getFullYear());
 
@@ -172,7 +171,7 @@ var Timeframe = Class.create({
     document.observe('mouseover', this.eventMouseOver.bind(this));
     document.observe('mouseup', this.eventMouseUp.bind(this));
     document.observe('unload', this.unregister.bind(this));
-    if(Prototype.Browser.Opera) document.observe('mousemove', this.handleMousemove.bind(this));
+    // mousemove listener for Opera in _disableTextSelection
     return this._registerFieldObserver('start')._registerFieldObserver('end')._disableTextSelection();
   },
 
@@ -189,10 +188,17 @@ var Timeframe = Class.create({
   },
 
   _disableTextSelection: function() {
-    this.element.onselectstart       = function() { return false; };
-    this.element.unselectable        = 'on';
-    this.element.style.MozUserSelect = 'none';
-    this.element.style.cursor        = 'default';
+    if(Prototype.Browser.IE) {
+      this.element.onselectstart = function(event) {
+        if(!/input|textarea/i.test(Event.element(event).tagName)) return false;
+      };
+    } else if(Prototype.Browser.Opera) {
+      document.observe('mousemove', this.handleMouseMove.bind(this));
+    } else {
+      this.element.onmousedown = function(event) {
+        if(!/input|textarea/i.test(Event.element(event).tagName)) return false;
+      };
+    }
     return this;
   },
 
@@ -277,7 +283,7 @@ var Timeframe = Class.create({
     this.fields.get('start').value = this.fields.get('start').defaultValue || '';
     this.fields.get('end').value   = this.fields.get('end').defaultValue   || '';
     this.date = new Date(this.initDate);
-    this.parseField('start').parseField('end');
+    this.parseField('start').refreshField('start').parseField('end').refreshField('end');
   },
 
   handleDateClick: function(element, couldClear) {
@@ -322,10 +328,9 @@ var Timeframe = Class.create({
       if(el = this.element.select('#calendar_0 .pre.selected').first());
       else if(el = this.element.select('.active.selected').first());
       if(el) Element.insert(el, { top: this.clearButton });
-      this.clearButton.show().down('span').removeClassName('active');        
-    } else {
+      this.clearButton.show().select('span').first().removeClassName('active');        
+    } else
       this.clearButton.hide();
-    }
   },
 
   extendRange: function(date) {
@@ -345,16 +350,18 @@ var Timeframe = Class.create({
   eventMouseUp: function(event) {
     if(!this.dragging) return;
     if(!this.stuck) {
-      var el;
       this.dragging = false;
-      if(el = event.findElement('span.clear span.active')) {
-        el.removeClassName('active').up('span').hide();
-        this.range.set('start', this.range.set('end', null));
-        this.refreshField('start').refreshField('end');
-      }
+      if(event.findElement('span.clear span.active'))
+        this.clearRange();
     }
     this.mousedown = false;
     this.refreshRange();
+  },
+
+  clearRange: function() {
+    this.clearButton.hide().select('span').first().removeClassName('active');
+    this.range.set('start', this.range.set('end', null));
+    this.refreshField('start').refreshField('end');
   },
 
   refreshRange: function() {
@@ -378,7 +385,7 @@ var Timeframe = Class.create({
     if(this.dragging) this.refreshField('start').refreshField('end');
   },
 
-  handleMousemove: function(event) {
+  handleMouseMove: function(event) {
     if(event.findElement('#' + this.element.id + ' td')) window.getSelection().removeAllRanges(); // More Opera trickery
   }
 });
