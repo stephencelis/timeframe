@@ -327,6 +327,7 @@ var Timeframe = Class.create({
     if(event.element().ancestors && event.findElement('td.selected')) {
       if(el = this.element.select('#calendar_0 .pre.selected').first());
       else if(el = this.element.select('.active.selected').first());
+      else if(el = this.element.select('.post.selected').first());
       if(el) Element.insert(el, { top: this.clearButton });
       this.clearButton.show().select('span').first().removeClassName('active');        
     } else
