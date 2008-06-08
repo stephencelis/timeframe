@@ -297,7 +297,7 @@ var Timeframe = Class.create({
       return;
     } else if (couldClear) {
       if (!element.hasClassName('startrange')) return;
-    } else {
+    } else if (this.maxRange != 1) {
       this.stuck = true;
       setTimeout(function() { if (this.mousedown) this.stuck = false; }.bind(this), 200);
     }
