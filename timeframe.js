@@ -24,6 +24,7 @@ var Timeframe = Class.create({
     Timeframes.push(this);
 
     this.element = $(element);
+    this.element.addClassName('timeframe_calendar')
     this.options = $H({ months: 2 }).merge(options || {});;
     this.months = this.options.get('months');
 
@@ -129,7 +130,7 @@ var Timeframe = Class.create({
   },
 
   _buildButtons: function() {
-    var buttonList = new Element('ul', { id: this.element.id + '_menu' });
+    var buttonList = new Element('ul', { id: this.element.id + '_menu', className: 'timeframe_menu' });
     this.buttons.each(function(pair) {
       if (pair.value.get('element'))
         pair.value.get('element').addClassName('timeframe_button').addClassName(pair.key);
@@ -148,7 +149,7 @@ var Timeframe = Class.create({
   },
 
   _buildFields: function() {
-    var fieldset = new Element('div', { id: this.element.id + '_fields' });
+    var fieldset = new Element('div', { id: this.element.id + '_fields', className: 'timeframe_fields' });
     this.fields.each(function(pair) {
       if (pair.value)
         pair.value.addClassName('timeframe_field').addClassName(pair.key);
