@@ -462,6 +462,22 @@
       assert(!timeframe.element.select('td').first().hasClassName('unselectable'));
     }},
 
+    testMaxRange: function() { with(this) {
+      var timeframe = new Timeframe('timeframe', { maxRange: 7 });
+      var days = timeframe.element.select('td.selectable');
+      var early = days[0];
+      var mid = days[6];
+      var late = days[12];
+      TimeframeHelpers.doubleClickDrag({ from: early, to: late });
+      assert(early.hasClassName('startrange'));
+      assert(!late.hasClassName('endrange'));
+      assert(mid.hasClassName('endrange'));
+      TimeframeHelpers.doubleClickDrag({ from: late, to: early });
+      assert(late.hasClassName('endrange'));
+      assert(!early.hasClassName('startrange'));
+      assert(mid.hasClassName('startrange'));
+    }},
+
     testCantSelectUnselectableDate: function() { with(this) {
       var midMonth = new Date();
       midMonth.setDate(15);

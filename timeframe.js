@@ -32,6 +32,7 @@ var Timeframe = Class.create({
     this.monthNames   = Locale.get('monthNames');
     this.format       = this.options.get('format')     || Locale.get('format');
     this.weekOffset   = this.options.get('weekOffset') || Locale.get('weekOffset');
+    this.maxRange = this.options.get('maxRange');
 
     this.buttons = $H({
       previous: $H({ label: '&larr;', element: $(this.options.get('previousButton')) }),
@@ -291,9 +292,10 @@ var Timeframe = Class.create({
 
   handleDateClick: function(element, couldClear) {
     this.mousedown = this.dragging = true;
-    if (this.stuck)
+    if (this.stuck) {
       this.stuck = false;
-    else if (couldClear) {
+      return;
+    } else if (couldClear) {
       if (!element.hasClassName('startrange')) return;
     } else {
       this.stuck = true;
@@ -337,17 +339,36 @@ var Timeframe = Class.create({
   },
 
   extendRange: function(date) {
+    var start, end;
     this.clearButton.hide();
     if (date > this.startdrag) {
-      this.range.set('start', this.startdrag);
-      this.range.set('end', date);
+      start = this.startdrag;
+      end = date;
     } else if (date < this.startdrag) {
-      this.range.set('start', date);
-      this.range.set('end', this.startdrag);
-    } else {
-      this.range.set('start', this.range.set('end', date));
-    }
+      start = date;
+      end = this.startdrag;
+    } else
+      start = end = date;
+    this.validateRange(start, end);
     this.refreshRange();
+  },
+
+  validateRange: function(start, end) {
+    if (this.maxRange) {
+      var range = this.maxRange - 1;
+      var days = parseInt((end - start) / 86400000);
+      if (days > range) {
+        if (start == this.startdrag) {
+          end = new Date(this.startdrag);
+          end.setDate(end.getDate() + range);
+        } else {
+          start = new Date(this.startdrag);
+          start.setDate(start.getDate() - range);
+        }
+      }
+    }
+    this.range.set('start', start);
+    this.range.set('end', end);
   },
 
   eventMouseUp: function(event) {

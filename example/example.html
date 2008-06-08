@@ -47,6 +47,8 @@
       <dd>Declare the navigational buttons (by default, these are also generated with the Timeframe).</dd>
       <dt><code>earliest</code>, <code>latest</code></dt>
       <dd>The earliest and latest selectable dates (accepts either a <code>Date</code> object or a <code>String</code> that can be parsed with <code>Date.parse()</code>).</dd>
+      <dt>maxRange</dt>
+      <dd>Limit the maximum possible range length (set to <code>1</code> to turn Timeframe into a regular old date picker).</dd>
     </dl>
     <h3>Localization:</h3>
     <p>
@@ -135,7 +137,8 @@
         startField: 'start',
         endField: 'end',
         earliest: new Date(),
-        resetButton: 'reset' });
+        resetButton: 'reset',
+        maxRange: 7 });
     //]]>
   </script>
 </body>

@@ -37,6 +37,10 @@ The code:
   The earliest and latest selectable dates (accepts either a `Date` object or
   a `String` that can be parsed with `Date.parse()`).
 
+* `maxRange`:
+  Limit the maximum possible range length (set to `1` to turn Timeframe into
+  a regular old date picker).
+
 
 ### Localization:
 
