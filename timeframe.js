@@ -4,7 +4,7 @@
  * Freely distributable under the terms of an MIT-style license. 
  * ------------------------------------------------------------- */
 
-if(typeof Prototype == 'undefined' || parseFloat(Prototype.Version.substring(0, 3)) < 1.6)
+if (typeof Prototype == 'undefined' || parseFloat(Prototype.Version.substring(0, 3)) < 1.6)
   throw 'Timeframe requires Prototype version 1.6 or greater.';
 
 // Checks for localized Datejs before defaulting to 'en-US'
@@ -46,7 +46,7 @@ var Timeframe = Class.create({
     this.latest   = Date.parseToObject(this.options.get('latest'));
 
     this.calendars = [];
-    this.element.insert(new Element('div', { id: 'calendars_container' }));
+    this.element.insert(new Element('div', { id: this.element.id + '_container' }));
     this.months.times(function(month) { this.createCalendar(month) }.bind(this));
 
     this.register().populate().refreshRange();
@@ -55,7 +55,9 @@ var Timeframe = Class.create({
   // Scaffolding
 
   createCalendar: function() {
-    var calendar = new Element('table', { id: 'calendar_' + this.calendars.length, border: 0, cellspacing: 0, cellpadding: 5 });
+    var calendar = new Element('table', {
+      id: this.element.id + '_calendar_' + this.calendars.length, border: 0, cellspacing: 0, cellpadding: 5
+    });
     calendar.insert(new Element('caption'));
 
     var head = new Element('thead');
@@ -79,7 +81,7 @@ var Timeframe = Class.create({
     }.bind(this));
     calendar.insert(body);
 
-    this.element.down('div#calendars_container').insert(calendar);
+    this.element.down('div#' + this.element.id + '_container').insert(calendar);
     this.calendars.push(calendar);
     this.months = this.calendars.length;
     return this;
@@ -102,23 +104,23 @@ var Timeframe = Class.create({
       var offset = (iterator.getDay() - this.weekOffset) % 7;
       var inactive = offset > 0 ? 'pre beyond' : false;
       iterator.setDate(iterator.getDate() - offset);
-      if(iterator.getDate() > 1 && !inactive) {
+      if (iterator.getDate() > 1 && !inactive) {
         iterator.setDate(iterator.getDate() - 7);
-        if(iterator.getDate() > 1) inactive = 'pre beyond';
+        if (iterator.getDate() > 1) inactive = 'pre beyond';
       }
 
       calendar.select('td').each(function(day) {
         day.date = new Date(iterator); // Is this expensive (we unload these later)? We could store the epoch time instead.
         day.update(day.date.getDate()).writeAttribute('class', inactive || 'active');
-        if((this.earliest && day.date < this.earliest) || (this.latest && day.date > this.latest))
+        if ((this.earliest && day.date < this.earliest) || (this.latest && day.date > this.latest))
           day.addClassName('unselectable');
         else
           day.addClassName('selectable');
-        if(iterator.toString() === new Date().neutral().toString()) day.addClassName('today');
+        if (iterator.toString() === new Date().neutral().toString()) day.addClassName('today');
         day.baseClass = day.readAttribute('class');
 
         iterator.setDate(iterator.getDate() + 1);
-        if(iterator.getDate() == 1) inactive = inactive ? false : 'post beyond';
+        if (iterator.getDate() == 1) inactive = inactive ? false : 'post beyond';
       }.bind(this));
 
       month.setMonth(month.getMonth() + 1);
@@ -127,9 +129,9 @@ var Timeframe = Class.create({
   },
 
   _buildButtons: function() {
-    var buttonList = new Element('ul', { id: 'timeframe_menu' });
+    var buttonList = new Element('ul', { id: this.element.id + '_menu' });
     this.buttons.each(function(pair) {
-      if(pair.value.get('element'))
+      if (pair.value.get('element'))
         pair.value.get('element').addClassName('timeframe_button').addClassName(pair.key);
       else {
         var item = new Element('li');
@@ -140,25 +142,25 @@ var Timeframe = Class.create({
         buttonList.insert(item);
       }
     }.bind(this))
-    if(buttonList.childNodes.length > 0) this.element.insert({ top: buttonList });
+    if (buttonList.childNodes.length > 0) this.element.insert({ top: buttonList });
     this.clearButton = new Element('span', { className: 'clear' }).update(new Element('span').update('X'));
     return this;
   },
 
   _buildFields: function() {
-    var fieldset = new Element('div', { id: 'timeframe_fields' });
+    var fieldset = new Element('div', { id: this.element.id + '_fields' });
     this.fields.each(function(pair) {
-      if(pair.value)
+      if (pair.value)
         pair.value.addClassName('timeframe_field').addClassName(pair.key);
       else {
-        var container = new Element('div', { id: pair.key + 'field_container' });
-        this.fields.set(pair.key, new Element('input', { id: pair.key + 'field', name: pair.key + 'field', type: 'text', value: '' }));
+        var container = new Element('div', { id: pair.key + this.element.id + '_field_container' });
+        this.fields.set(pair.key, new Element('input', { id: this.element.id + '_' + pair.key + 'field', name: pair.key + 'field', type: 'text', value: '' }));
         container.insert(new Element('label', { 'for': pair.key + 'field' }).update(pair.key));
         container.insert(this.fields.get(pair.key));
         fieldset.insert(container);
       }
     }.bind(this));
-    if(fieldset.childNodes.length > 0) this.element.insert(fieldset);
+    if (fieldset.childNodes.length > 0) this.element.insert(fieldset);
     this.parseField('start').refreshField('start').parseField('end').refreshField('end').initDate = new Date(this.date);
     return this;
   },
@@ -166,9 +168,9 @@ var Timeframe = Class.create({
   // Event registration
 
   register: function() {
-    document.observe('click', this.eventClick.bind(this));
-    document.observe('mousedown', this.eventMouseDown.bind(this));
-    document.observe('mouseover', this.eventMouseOver.bind(this));
+    this.element.observe('click', this.eventClick.bind(this));
+    this.element.observe('mousedown', this.eventMouseDown.bind(this));
+    this.element.observe('mouseover', this.eventMouseOver.bind(this));
     document.observe('mouseup', this.eventMouseUp.bind(this));
     document.observe('unload', this.unregister.bind(this));
     // mousemove listener for Opera in _disableTextSelection
@@ -183,20 +185,20 @@ var Timeframe = Class.create({
     var field = this.fields.get(fieldName);
     field.observe('focus', function() { field.hasFocus = true; this.parseField(fieldName, true); }.bind(this));
     field.observe('blur', function() { this.refreshField(fieldName); }.bind(this));
-    new Form.Element.Observer(field, 0.2, function(element, value) { if(element.hasFocus) this.parseField(fieldName, true); }.bind(this));
+    new Form.Element.Observer(field, 0.2, function(element, value) { if (element.hasFocus) this.parseField(fieldName, true); }.bind(this));
     return this;
   },
 
   _disableTextSelection: function() {
-    if(Prototype.Browser.IE) {
+    if (Prototype.Browser.IE) {
       this.element.onselectstart = function(event) {
-        if(!/input|textarea/i.test(Event.element(event).tagName)) return false;
+        if (!/input|textarea/i.test(Event.element(event).tagName)) return false;
       };
-    } else if(Prototype.Browser.Opera) {
+    } else if (Prototype.Browser.Opera) {
       document.observe('mousemove', this.handleMouseMove.bind(this));
     } else {
       this.element.onmousedown = function(event) {
-        if(!/input|textarea/i.test(Event.element(event).tagName)) return false;
+        if (!/input|textarea/i.test(Event.element(event).tagName)) return false;
       };
     }
     return this;
@@ -208,14 +210,14 @@ var Timeframe = Class.create({
     var field = this.fields.get(fieldName);
     var date = Date.parseToObject(this.fields.get(fieldName).value);
     var failure = this.validateField(fieldName, date);
-    if(failure != 'hard') {
+    if (failure != 'hard') {
       this.range.set(fieldName, date);
       field.removeClassName('error');
-    } else if(field.hasFocus)
+    } else if (field.hasFocus)
       field.addClassName('error');
     var date = Date.parseToObject(this.range.get(fieldName));
     this.date = date || new Date();
-    if(populate && date) this.populate()
+    if (populate && date) this.populate()
     this.refreshRange();
     return this;
   },
@@ -223,7 +225,7 @@ var Timeframe = Class.create({
   refreshField: function(fieldName) {
     var field = this.fields.get(fieldName);
     var initValue = field.value;
-    if(this.range.get(fieldName)) {
+    if (this.range.get(fieldName)) {
       field.value = typeof Date.CultureInfo == 'undefined' ? this.range.get(fieldName).strftime(this.format) : this.range.get(fieldName).toString(this.format);
     } else
       field.value = '';
@@ -233,13 +235,13 @@ var Timeframe = Class.create({
   },
 
   validateField: function(fieldName, date) {
-    if(!date) return;
+    if (!date) return;
     var error;
-    if((this.earliest && date < this.earliest) || (this.latest && date > this.latest))
+    if ((this.earliest && date < this.earliest) || (this.latest && date > this.latest))
       error = 'hard';
-    else if(fieldName == 'start' && this.range.get('end') && date > this.range.get('end'))
+    else if (fieldName == 'start' && this.range.get('end') && date > this.range.get('end'))
       error = 'soft';
-    else if(fieldName == 'end' && this.range.get('start') && date < this.range.get('start'))
+    else if (fieldName == 'end' && this.range.get('start') && date < this.range.get('start'))
       error = 'soft';
     return error;
   },
@@ -247,20 +249,20 @@ var Timeframe = Class.create({
   // Event handling
 
   eventClick: function(event) {
-    if(!event.element().ancestors) return;
+    if (!event.element().ancestors) return;
     var el;
-    if(el = event.findElement('a.timeframe_button'))
+    if (el = event.findElement('a.timeframe_button'))
       this.handleButtonClick(event, el);
   },
 
   eventMouseDown: function(event) {
-    if(!event.element().ancestors) return;
+    if (!event.element().ancestors) return;
     var el, em;
-    if(el = event.findElement('span.clear')) {
+    if (el = event.findElement('span.clear')) {
       el.down('span').addClassName('active');
-      if(em = event.findElement('td.selectable'))
+      if (em = event.findElement('td.selectable'))
         this.handleDateClick(em, true);
-    } else if(el = event.findElement('td.selectable'))
+    } else if (el = event.findElement('td.selectable'))
       this.handleDateClick(el);
     else return;
   },
@@ -268,13 +270,13 @@ var Timeframe = Class.create({
   handleButtonClick: function(event, element) {
     var el;
     var movement = this.months > 1 ? this.months - 1 : 1;
-    if(element.hasClassName('next'))
+    if (element.hasClassName('next'))
       this.date.setMonth(this.date.getMonth() + movement);
-    else if(element.hasClassName('previous'))
+    else if (element.hasClassName('previous'))
       this.date.setMonth(this.date.getMonth() - movement);
-    else if(element.hasClassName('today'))
+    else if (element.hasClassName('today'))
       this.date = new Date();
-    else if(element.hasClassName('reset'))
+    else if (element.hasClassName('reset'))
       this.reset();
     this.populate().refreshRange();
   },
@@ -288,23 +290,23 @@ var Timeframe = Class.create({
 
   handleDateClick: function(element, couldClear) {
     this.mousedown = this.dragging = true;
-    if(this.stuck)
+    if (this.stuck)
       this.stuck = false;
-    else if(couldClear) {
-      if(!element.hasClassName('startrange')) return;
+    else if (couldClear) {
+      if (!element.hasClassName('startrange')) return;
     } else {
       this.stuck = true;
-      setTimeout(function() { if(this.mousedown) this.stuck = false; }.bind(this), 200);
+      setTimeout(function() { if (this.mousedown) this.stuck = false; }.bind(this), 200);
     }
     this.getPoint(element.date);
   },
 
   getPoint: function(date) {
-    if(this.range.get('start') && this.range.get('start').toString() == date && this.range.get('end'))
+    if (this.range.get('start') && this.range.get('start').toString() == date && this.range.get('end'))
       this.startdrag = this.range.get('end');
     else {
       this.clearButton.hide();
-      if(this.range.get('end') && this.range.get('end').toString() == date)
+      if (this.range.get('end') && this.range.get('end').toString() == date)
         this.startdrag = this.range.get('start');
       else
         this.startdrag = this.range.set('start', this.range.set('end', date));
@@ -314,20 +316,20 @@ var Timeframe = Class.create({
 
   eventMouseOver: function(event) {
     var el;
-    if(!this.dragging)
+    if (!this.dragging)
       this.toggleClearButton(event);
-    else if(event.findElement('span.clear span.active'));
-    else if(el = event.findElement('td.selectable'))
+    else if (event.findElement('span.clear span.active'));
+    else if (el = event.findElement('td.selectable'))
       this.extendRange(el.date);
     else this.toggleClearButton(event);
   },
 
   toggleClearButton: function(event) {
     var el;
-    if(event.element().ancestors && event.findElement('td.selected')) {
-      if(el = this.element.select('#calendar_0 .pre.selected').first());
-      else if(el = this.element.select('.active.selected').first());
-      if(el) Element.insert(el, { top: this.clearButton });
+    if (event.element().ancestors && event.findElement('td.selected')) {
+      if (el = this.element.select('#calendar_0 .pre.selected').first());
+      else if (el = this.element.select('.active.selected').first());
+      if (el) Element.insert(el, { top: this.clearButton });
       this.clearButton.show().select('span').first().removeClassName('active');        
     } else
       this.clearButton.hide();
@@ -335,10 +337,10 @@ var Timeframe = Class.create({
 
   extendRange: function(date) {
     this.clearButton.hide();
-    if(date > this.startdrag) {
+    if (date > this.startdrag) {
       this.range.set('start', this.startdrag);
       this.range.set('end', date);
-    } else if(date < this.startdrag) {
+    } else if (date < this.startdrag) {
       this.range.set('start', date);
       this.range.set('end', this.startdrag);
     } else {
@@ -348,10 +350,10 @@ var Timeframe = Class.create({
   },
 
   eventMouseUp: function(event) {
-    if(!this.dragging) return;
-    if(!this.stuck) {
+    if (!this.dragging) return;
+    if (!this.stuck) {
       this.dragging = false;
-      if(event.findElement('span.clear span.active'))
+      if (event.findElement('span.clear span.active'))
         this.clearRange();
     }
     this.mousedown = false;
@@ -367,33 +369,33 @@ var Timeframe = Class.create({
   refreshRange: function() {
     this.element.select('td').each(function(day) {
       day.writeAttribute('class', day.baseClass);
-      if(this.range.get('start') && this.range.get('end') && this.range.get('start') <= day.date && day.date <= this.range.get('end')) {
+      if (this.range.get('start') && this.range.get('end') && this.range.get('start') <= day.date && day.date <= this.range.get('end')) {
         var baseClass = day.hasClassName('beyond') ? 'beyond_' : day.hasClassName('today') ? 'today_' : null;
         var state = this.stuck || this.mousedown ? 'stuck' : 'selected';
-        if(baseClass) day.addClassName(baseClass + state);
+        if (baseClass) day.addClassName(baseClass + state);
         day.addClassName(state);
         var rangeClass = '';
-        if(this.range.get('start').toString() == day.date) rangeClass += 'start';
-        if(this.range.get('end').toString() == day.date) rangeClass += 'end';
-        if(rangeClass.length > 0) day.addClassName(rangeClass + 'range');
+        if (this.range.get('start').toString() == day.date) rangeClass += 'start';
+        if (this.range.get('end').toString() == day.date) rangeClass += 'end';
+        if (rangeClass.length > 0) day.addClassName(rangeClass + 'range');
       }
-      if(Prototype.Browser.Opera) {
+      if (Prototype.Browser.Opera) {
         day.unselectable = 'on'; // Trick Opera into refreshing the selection (FIXME)
         day.unselectable = null;
       }
     }.bind(this));
-    if(this.dragging) this.refreshField('start').refreshField('end');
+    if (this.dragging) this.refreshField('start').refreshField('end');
   },
 
   handleMouseMove: function(event) {
-    if(event.findElement('#' + this.element.id + ' td')) window.getSelection().removeAllRanges(); // More Opera trickery
+    if (event.findElement('#' + this.element.id + ' td')) window.getSelection().removeAllRanges(); // More Opera trickery
   }
 });
 
 Object.extend(Date, {
   parseToObject: function(string) {
     var date = Date.parse(string);
-    if(!date) return null;
+    if (!date) return null;
     date = new Date(date);
     return (date == 'Invalid Date' || date == 'NaN') ? null : date.neutral();
   }
