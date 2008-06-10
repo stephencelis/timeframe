@@ -1,8 +1,6 @@
 THINGS TODO (mostly in order of importance)
 
-* Let's unit test
-
-* Optimize for IE (prettier than before, but slow like so many molasses)
+* Optimize for IE
 
 * Limit the previous/next buttons to selectable months (between `earliest`
   and `latest`)
@@ -19,5 +17,5 @@ THINGS TODO (mostly in order of importance)
 
 * Never too late for code CLEANUP and optimizations
 
-* [?] Range options: minrange, maxrange, defaultrange (still thinking about
-  this one)
+* [?] Range options: minrange, defaultrange (do minrange and defaultrange
+  make sense?)

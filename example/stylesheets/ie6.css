@@ -1,24 +1,24 @@
-#calendars li a, #calendars table {
+div.timeframe_calendar li a, div.timeframe_calendar table {
   display: inline;
 }
-#calendars tbody td.startrange, #calendars tbody td.endrange, #calendars tbody td.startendrange, #calendars tbody td span.clear span, #calendars tbody td span.clear span.active {
+div.timeframe_calendar tbody td.startrange, div.timeframe_calendar tbody td.endrange, div.timeframe_calendar tbody td.startendrange, div.timeframe_calendar tbody td span.clear span, div.timeframe_calendar tbody td span.clear span.active {
   background-image: none;
 }
-#calendars tbody td.startrange {
+div.timeframe_calendar tbody td.startrange {
   filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/start.png', sizingMethod='crop');
 }
-#calendars tbody td.endrange {
+div.timeframe_calendar tbody td.endrange {
   filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/end.png', sizingMethod='crop');
 }
-#calendars tbody td.startendrange {
+div.timeframe_calendar tbody td.startendrange {
   filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/startend.png', sizingMethod='crop');
 }
-#calendars tbody td span.clear span {
+div.timeframe_calendar tbody td span.clear span {
   filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/closebox.png', sizingMethod='crop');
 }
-  #calendars tbody td span.clear span.active {
+  div.timeframe_calendar tbody td span.clear span.active {
     filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/closebox_selected.png', sizingMethod='crop');
   }
-#calendars tbody td.beyond {
+div.timeframe_calendar tbody td.beyond {
   filter: none;
 }

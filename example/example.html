@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="stylesheets/timeframe.css" type="text/css" media="screen" title="timeframe" charset="utf-8"/>
   <!--[if lt IE 8]>
     <style type="text/css" media="screen">
-      #calendars li a, #calendars table {
+      div.timeframe_calendar li a, div.timeframe_calendar table {
         display: inline;
       }
     </style>
@@ -47,6 +47,8 @@
       <dd>Declare the navigational buttons (by default, these are also generated with the Timeframe).</dd>
       <dt><code>earliest</code>, <code>latest</code></dt>
       <dd>The earliest and latest selectable dates (accepts either a <code>Date</code> object or a <code>String</code> that can be parsed with <code>Date.parse()</code>).</dd>
+      <dt><code>maxRange</code></dt>
+      <dd>Limit the maximum possible range length (set to <code>1</code> to turn Timeframe into a regular old date picker).</dd>
     </dl>
     <h3>Localization:</h3>
     <p>

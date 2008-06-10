@@ -1,4 +1,4 @@
-#calendars {
+div.timeframe_calendar {
   display: inline-block;
   margin: 0;
   padding: 0;
@@ -7,17 +7,17 @@
 }
 
 /* Menu */
-#calendars ul#timeframe_menu {
+div.timeframe_calendar ul.timeframe_menu {
   list-style-type: none;
   font-weight: bold;
   margin: auto;
   padding: 0 0 6px;
   width: 60px;
 }
-  #calendars ul#timeframe_menu li {
+  div.timeframe_calendar ul.timeframe_menu li {
     display: inline;
   }
-    #calendars ul#timeframe_menu li a {
+    div.timeframe_calendar ul.timeframe_menu li a {
       display: inline-block;
       height: 20px;
       padding: 2px 0 0;
@@ -25,38 +25,38 @@
       width: 20px;
       -webkit-box-shadow: 0 1px 2px #999;
     }
-      #calendars ul#timeframe_menu li a.previous, #calendars ul#timeframe_menu li a.next {
+      div.timeframe_calendar ul.timeframe_menu li a.previous, div.timeframe_calendar ul.timeframe_menu li a.next {
         background: #fff;
         color: #468966;
       }
-        #calendars ul#timeframe_menu li a.previous:hover, #calendars ul#timeframe_menu li a.next:hover {
+        div.timeframe_calendar ul.timeframe_menu li a.previous:hover, div.timeframe_calendar ul.timeframe_menu li a.next:hover {
           background: #ccc;
         }
-        #calendars ul#timeframe_menu li a.previous:active, #calendars ul#timeframe_menu li a.next:active {
+        div.timeframe_calendar ul.timeframe_menu li a.previous:active, div.timeframe_calendar ul.timeframe_menu li a.next:active {
           background: #aaa;
         }
-      #calendars ul#timeframe_menu li a.disabled, #calendars ul#timeframe_menu li a.disabled:hover, #calendars ul#timeframe_menu li a.disabled:active {
+      div.timeframe_calendar ul.timeframe_menu li a.disabled, div.timeframe_calendar ul.timeframe_menu li a.disabled:hover, div.timeframe_calendar ul.timeframe_menu li a.disabled:active {
         background: #fff;
         color: #ccc;
         cursor: default;
       }
-      #calendars ul#timeframe_menu li a.today {
+      div.timeframe_calendar ul.timeframe_menu li a.today {
         background: #468966;
         color: #eee;
       }
-        #calendars ul#timeframe_menu li a.today:hover {
+        div.timeframe_calendar ul.timeframe_menu li a.today:hover {
           background: #246744;
         }
-        #calendars ul#timeframe_menu li a.today:active {
+        div.timeframe_calendar ul.timeframe_menu li a.today:active {
           background: #024522;
         }
-      #calendars ul#timeframe_menu li a.previous {
+      div.timeframe_calendar ul.timeframe_menu li a.previous {
         -webkit-border-top-left-radius:     10px;
         -webkit-border-bottom-left-radius:  10px;
         -moz-border-radius-topleft:         11px;
         -moz-border-radius-bottomleft:      11px;
       }
-      #calendars ul#timeframe_menu li a.next {
+      div.timeframe_calendar ul.timeframe_menu li a.next {
         -webkit-border-top-right-radius:     10px;
         -webkit-border-bottom-right-radius:  10px;
         -moz-border-radius-topright:         11px;
@@ -64,7 +64,7 @@
       }
 
 /* Calendar*/
-#calendars table {
+div.timeframe_calendar table {
   border-collapse: collapse;
   display: inline;
   display: inline-block;
@@ -72,93 +72,93 @@
   margin: 0 6px 12px;
 }
   /* Month names */
-  #calendars table caption {
+  div.timeframe_calendar table caption {
     text-shadow: 0 0 0 #fff;
   }
   /* Cell sizes */
-  #calendars thead th, #calendars tbody td {
+  div.timeframe_calendar thead th, div.timeframe_calendar tbody td {
     height: 18px;
     margin: 0;
     padding: 2px 1px;
     width: 20px;
   }
   /* Weekday letters */
-  #calendars thead {
+  div.timeframe_calendar thead {
     background: #222;
     color: #eee;
   }
   /* Days */
-  #calendars tbody {
+  div.timeframe_calendar tbody {
     background: #fff;
     -webkit-box-shadow: 0px 2px 6px #999;
   }
-    #calendars tbody td {
+    div.timeframe_calendar tbody td {
       cursor: pointer;
     }
       /* Hover states not available in IE */
-      #calendars tbody td.selectable:hover {
+      div.timeframe_calendar tbody td.selectable:hover {
         background-color: #bbb;
       }
-      #calendars tbody td.selected:hover, #calendars tbody td.stuck:hover {
+      div.timeframe_calendar tbody td.selected:hover, div.timeframe_calendar tbody td.stuck:hover {
         background-color: #e99a27;
       }
       /* Selected states */
-      #calendars tbody td.selected {
+      div.timeframe_calendar tbody td.selected {
         background-color: #ffb03b;
       }
-      #calendars tbody td.stuck {
+      div.timeframe_calendar tbody td.stuck {
         background-color: #e99a27;
       }
       /* Range markers */
-      #calendars tbody td.startrange, #calendars tbody td.endrange, #calendars tbody td.startendrange {
+      div.timeframe_calendar tbody td.startrange, div.timeframe_calendar tbody td.endrange, div.timeframe_calendar tbody td.startendrange {
         cursor: col-resize;
       }
-      #calendars tbody td.startrange {
+      div.timeframe_calendar tbody td.startrange {
         background-image: url(../images/start.png);
       }
-      #calendars tbody td.endrange {
+      div.timeframe_calendar tbody td.endrange {
         background-image: url(../images/end.png);
       }
-      #calendars tbody td.startendrange {
+      div.timeframe_calendar tbody td.startendrange {
         background-image: url(../images/startend.png);
       }
       /* Today */
-      #calendars tbody td.today {
+      div.timeframe_calendar tbody td.today {
         background-color: #468966;
         color: #eee;
       }
-        #calendars tbody td.today_selected {
+        div.timeframe_calendar tbody td.today_selected {
           background-color: #b64926;
         }
-        #calendars tbody td.today_stuck {
+        div.timeframe_calendar tbody td.today_stuck {
           background-color: #8e2800;
         }
       /* Post/pre-month */
-      #calendars tbody td.beyond {
+      div.timeframe_calendar tbody td.beyond {
         background-color: #aaa;
         background-image: none;
         color: #ccc;
       }
-        #calendars tbody td.beyond_selected {
+        div.timeframe_calendar tbody td.beyond_selected {
           background-color: #999;
         }
-        #calendars tbody td.beyond_stuck {
+        div.timeframe_calendar tbody td.beyond_stuck {
           background-color: #888;
         }
       
-      #calendars tbody td.unselectable {
+      div.timeframe_calendar tbody td.unselectable {
         color: #ccc;
         cursor: default;
       }
       /* Clear button */
-      #calendars tbody td span.clear {
+      div.timeframe_calendar tbody td span.clear {
         color: transparent;
         display: block;
         height: 0;
         position: absolute;
         width: 0;
       }
-        #calendars tbody td span.clear span {
+        div.timeframe_calendar tbody td span.clear span {
           background-image: url(../images/closebox.png);
           cursor: pointer;
           display: block;
@@ -169,6 +169,6 @@
           top: -18px;
           width: 30px;
         }
-          #calendars tbody td span.clear span.active {
+          div.timeframe_calendar tbody td span.clear span.active {
             background-image: url(../images/closebox_selected.png);
           }
