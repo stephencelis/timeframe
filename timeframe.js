@@ -170,7 +170,7 @@ var Timeframe = Class.create({
   // Event registration
 
   register: function() {
-    this.element.observe('click', this.eventClick.bind(this));
+    document.observe('click', this.eventClick.bind(this));
     this.element.observe('mousedown', this.eventMouseDown.bind(this));
     this.element.observe('mouseover', this.eventMouseOver.bind(this));
     document.observe('mouseup', this.eventMouseUp.bind(this));
@@ -210,7 +210,7 @@ var Timeframe = Class.create({
 
   parseField: function(fieldName, populate) {
     var field = this.fields.get(fieldName);
-    var date = Date.parseToObject(this.fields.get(fieldName).value);
+    var date = Date.parseToObject($F(this.fields.get(fieldName)));
     var failure = this.validateField(fieldName, date);
     if (failure != 'hard') {
       this.range.set(fieldName, date);
@@ -226,12 +226,14 @@ var Timeframe = Class.create({
 
   refreshField: function(fieldName) {
     var field = this.fields.get(fieldName);
-    var initValue = field.value;
+    var initValue = $F(field);
     if (this.range.get(fieldName)) {
-      field.value = typeof Date.CultureInfo == 'undefined' ? this.range.get(fieldName).strftime(this.format) : this.range.get(fieldName).toString(this.format);
+      field.setValue(typeof Date.CultureInfo == 'undefined' ?
+        this.range.get(fieldName).strftime(this.format) :
+        this.range.get(fieldName).toString(this.format));
     } else
-      field.value = '';
-    field.hasFocus && field.value == '' && initValue != '' ? field.addClassName('error') : field.removeClassName('error');
+      field.setValue('');
+    field.hasFocus && $F(field) == '' && initValue != '' ? field.addClassName('error') : field.removeClassName('error');
     field.hasFocus = false;
     return this;
   },
@@ -284,8 +286,8 @@ var Timeframe = Class.create({
   },
 
   reset: function() {
-    this.fields.get('start').value = this.fields.get('start').defaultValue || '';
-    this.fields.get('end').value   = this.fields.get('end').defaultValue   || '';
+    this.fields.get('start').setValue(this.fields.get('start').defaultValue || '');
+    this.fields.get('end').setValue(this.fields.get('end').defaultValue || '');
     this.date = new Date(this.initDate);
     this.parseField('start').refreshField('start').parseField('end').refreshField('end');
   },
