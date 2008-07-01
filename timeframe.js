@@ -411,6 +411,19 @@ var Timeframe = Class.create({
     }.bind(this));
     if (this.dragging) this.refreshField('start').refreshField('end');
   },
+  
+  setRange : function(start, end) {
+    
+    range = $H({ 'start' : start, 'end' : end });
+    
+    range.each(function(pair) {
+      this.range.set(pair.key, Date.parseToObject(pair.value));
+      this.refreshField(pair.key);
+      this.parseField(pair.key, true);
+    }.bind(this));
+    
+    return this;
+  },
 
   handleMouseMove: function(event) {
     if (event.findElement('#' + this.element.id + ' td')) window.getSelection().removeAllRanges(); // More Opera trickery
