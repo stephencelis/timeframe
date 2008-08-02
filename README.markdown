@@ -76,6 +76,13 @@ Dependencies:
 Timeframe requires [Prototype](http://prototypejs.org) 1.6 or higher.
 
 
+Contributors:
+-------------
+
+* Justin Palmer ("Caged")
+* Nik Wakelin ("codetocustomer")
+
+
 Download:
 ---------
 
