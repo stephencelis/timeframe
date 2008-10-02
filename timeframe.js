@@ -292,6 +292,11 @@ var Timeframe = Class.create({
     this.parseField('start').refreshField('start').parseField('end').refreshField('end');
   },
 
+  clear: function() {
+    this.clearRange();
+    this.refreshRange();
+  }
+
   handleDateClick: function(element, couldClear) {
     this.mousedown = this.dragging = true;
     if (this.stuck) {
@@ -332,7 +337,7 @@ var Timeframe = Class.create({
   toggleClearButton: function(event) {
     var el;
     if(event.element().ancestors && event.findElement('td.selected')) {
-      if(el = this.element.select('#calendar_0 .pre.selected').first());
+      if(el = this.element.select('#' + this.calendars.first().id +  ' .pre.selected').first());
       else if(el = this.element.select('.active.selected').first());
       else if(el = this.element.select('.post.selected').first());
       if(el) Element.insert(el, { top: this.clearButton });
@@ -389,6 +394,7 @@ var Timeframe = Class.create({
     this.clearButton.hide().select('span').first().removeClassName('active');
     this.range.set('start', this.range.set('end', null));
     this.refreshField('start').refreshField('end');
+    if (this.options.keys().include('onClear')) this.options.get('onClear')();
   },
 
   refreshRange: function() {
