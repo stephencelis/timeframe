@@ -295,7 +295,7 @@ var Timeframe = Class.create({
   clear: function() {
     this.clearRange();
     this.refreshRange();
-  }
+  },
 
   handleDateClick: function(element, couldClear) {
     this.mousedown = this.dragging = true;
@@ -336,11 +336,11 @@ var Timeframe = Class.create({
 
   toggleClearButton: function(event) {
     var el;
-    if(event.element().ancestors && event.findElement('td.selected')) {
-      if(el = this.element.select('#' + this.calendars.first().id +  ' .pre.selected').first());
-      else if(el = this.element.select('.active.selected').first());
-      else if(el = this.element.select('.post.selected').first());
-      if(el) Element.insert(el, { top: this.clearButton });
+    if (event.element().ancestors && event.findElement('td.selected')) {
+      if (el = this.element.select('#' + this.calendars.first().id +  ' .pre.selected').first());
+      else if (el = this.element.select('.active.selected').first());
+      else if (el = this.element.select('.post.selected').first());
+      if (el) Element.insert(el, { top: this.clearButton });
       this.clearButton.show().select('span').first().removeClassName('active');        
     } else
       this.clearButton.hide();
