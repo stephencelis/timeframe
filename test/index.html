@@ -139,8 +139,8 @@
       assertNotNull(timeframe.clearButton);
       timeframe.buttons.each(function(button) { assertNotNull(button.value.get('element')) });
       timeframe.fields.each(function(field) { assertEqual('INPUT', field.value.tagName.toUpperCase()); });
-      assertNotNull($('timeframe_firstday'));
-      assertNotNull($('timeframe_lastday'));
+      assertEqual(timeframe.element.select('td').first().id, 'timeframe_firstday');
+      assertEqual(timeframe.element.select('td').last().id, 'timeframe_lastday');
     }},
 
     testTableElementsPopulated: function() { with(this) {

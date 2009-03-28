@@ -55,6 +55,9 @@ var Timeframe = Class.create({
     this.calendars = [];
     this.element.insert(new Element('div', { id: this.element.id + '_container' }));
     this.months.times(function(month) { this.createCalendar(month) }.bind(this));
+    
+    this.calendars.first().select('td').first().id = this.firstDayId;
+    this.calendars.last().select('td').last().id = this.lastDayId;
 
     this.register().populate().refreshRange();
   },
@@ -91,9 +94,6 @@ var Timeframe = Class.create({
     this.element.down('div#' + this.element.id + '_container').insert(calendar);
     this.calendars.push(calendar);
     this.months = this.calendars.length;
-    
-    this.element.select('td').first().id = this.firstDayId;
-    this.element.select('td').last().id = this.lastDayId;
     
     return this;
   },
