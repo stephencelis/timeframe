@@ -1,4 +1,4 @@
-/* Timeframe, version 0.2
+/* Timeframe, version 0.3
  * (c) 2008 Stephen Celis
  *
  * Freely distributable under the terms of an MIT-style license. 
@@ -18,7 +18,7 @@ var Locale = $H({
 var Timeframes = [];
 
 var Timeframe = Class.create({
-  Version: '0.2',
+  Version: '0.3',
 
   initialize: function(element, options) {
     Timeframes.push(this);
@@ -33,6 +33,11 @@ var Timeframe = Class.create({
     this.format       = this.options.get('format')     || Locale.get('format');
     this.weekOffset   = this.options.get('weekOffset') || Locale.get('weekOffset');
     this.maxRange = this.options.get('maxRange');
+    
+    this.firstDayId = element.id + '_firstday';
+    this.lastDayId = element.id + '_lastday';
+    
+    this.scrollerDelay = 0.5;
 
     this.buttons = $H({
       previous: $H({ label: '&larr;', element: $(this.options.get('previousButton')) }),
@@ -86,6 +91,10 @@ var Timeframe = Class.create({
     this.element.down('div#' + this.element.id + '_container').insert(calendar);
     this.calendars.push(calendar);
     this.months = this.calendars.length;
+    
+    this.element.select('td').first().id = this.firstDayId;
+    this.element.select('td').last().id = this.lastDayId;
+    
     return this;
   },
 
@@ -98,6 +107,11 @@ var Timeframe = Class.create({
   populate: function() {
     var month = this.date.neutral();
     month.setDate(1);
+    
+    this.earliest === null || this.earliest < month ?
+      this.buttons.get('previous').get('element').removeClassName('disabled') :
+      this.buttons.get('previous').get('element').addClassName('disabled');
+    
     this.calendars.each(function(calendar) {
       var caption = calendar.select('caption').first();
       caption.update(this.monthNames[month.getMonth()] + ' ' + month.getFullYear());
@@ -127,6 +141,11 @@ var Timeframe = Class.create({
 
       month.setMonth(month.getMonth() + 1);
     }.bind(this));
+    
+    this.latest === null || this.latest > month.setDate(-1) ?
+      this.buttons.get('next').get('element').removeClassName('disabled') :
+      this.buttons.get('next').get('element').addClassName('disabled');
+    
     return this;
   },
 
@@ -274,11 +293,13 @@ var Timeframe = Class.create({
   handleButtonClick: function(event, element) {
     var el;
     var movement = this.months > 1 ? this.months - 1 : 1;
-    if (element.hasClassName('next'))
-      this.date.setMonth(this.date.getMonth() + movement);
-    else if (element.hasClassName('previous'))
-      this.date.setMonth(this.date.getMonth() - movement);
-    else if (element.hasClassName('today'))
+    if (element.hasClassName('next')) {
+      if (!this.buttons.get('next').get('element').hasClassName('disabled'))
+        this.date.setMonth(this.date.getMonth() + movement);
+    } else if (element.hasClassName('previous')) {
+      if (!this.buttons.get('previous').get('element').hasClassName('disabled'))
+        this.date.setMonth(this.date.getMonth() - movement);
+    } else if (element.hasClassName('today'))
       this.date = new Date();
     else if (element.hasClassName('reset'))
       this.reset();
@@ -329,9 +350,26 @@ var Timeframe = Class.create({
     if (!this.dragging)
       this.toggleClearButton(event);
     else if (event.findElement('span.clear span.active'));
-    else if (el = event.findElement('td.selectable'))
+    else if (el = event.findElement('td.selectable')) {
+      if (el.id == this.lastDayId) {
+        this.timer = window.setInterval(function() {
+          if (!this.buttons.get('next').get('element').hasClassName('disabled')) {
+            this.date.setMonth(this.date.getMonth() + 1);
+            this.populate().refreshRange();
+          }
+        }.bind(this), this.scrollerDelay * 1000);
+      } else if (el.id == this.firstDayId) {
+        this.timer = window.setInterval(function() {
+          if (!this.buttons.get('previous').get('element').hasClassName('disabled')) {
+            this.date.setMonth(this.date.getMonth() - 1);
+            this.populate().refreshRange();
+          }
+        }.bind(this), this.scrollerDelay * 1000);
+      } else {
+        window.clearInterval(this.timer);
+      }
       this.extendRange(el.date);
-    else this.toggleClearButton(event);
+    } else this.toggleClearButton(event);
   },
 
   toggleClearButton: function(event) {
@@ -385,6 +423,8 @@ var Timeframe = Class.create({
       this.dragging = false;
       if (event.findElement('span.clear span.active'))
         this.clearRange();
+      if (this.timer)
+        clearInterval(this.timer);
     }
     this.mousedown = false;
     this.refreshRange();

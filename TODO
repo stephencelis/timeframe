@@ -2,11 +2,6 @@ THINGS TODO (mostly in order of importance)
 
 * Optimize for IE
 
-* Limit the previous/next buttons to selectable months (between `earliest`
-  and `latest`)
-
-* Elegant way to drag to months before and after the displayed calendars
-
 * More localizations
   
 * Prettier initial styles, especially for non-Safari browsers
