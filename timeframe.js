@@ -34,8 +34,8 @@ var Timeframe = Class.create({
     this.weekOffset   = this.options.get('weekOffset') || Locale.get('weekOffset');
     this.maxRange = this.options.get('maxRange');
     
-    this.firstDayId = element.id + '_firstday';
-    this.lastDayId = element.id + '_lastday';
+    this.firstDayId = this.element.id + '_firstday';
+    this.lastDayId = this.element.id + '_lastday';
     
     this.scrollerDelay = 0.5;
 

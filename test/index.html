@@ -139,6 +139,8 @@
       assertNotNull(timeframe.clearButton);
       timeframe.buttons.each(function(button) { assertNotNull(button.value.get('element')) });
       timeframe.fields.each(function(field) { assertEqual('INPUT', field.value.tagName.toUpperCase()); });
+      assertNotNull($('timeframe_firstday'));
+      assertNotNull($('timeframe_lastday'));
     }},
 
     testTableElementsPopulated: function() { with(this) {
@@ -235,6 +237,11 @@
       var previousMonth = new Date(timeframe.initDate);
       previousMonth.setMonth(previousMonth.getMonth() - 1);
       assertEqual(previousMonth.toString(), timeframe.date.toString());
+      // Make sure it doesn't move back if button is disabled
+      timeframe.buttons.get('previous').get('element').addClassName('disabled');
+      Event.simulateMouse(timeframe.buttons.get('previous').get('element'), 'click');
+      previousMonth.setMonth(previousMonth.getMonth() - 1);
+      assertNotEqual(previousMonth.toString(), timeframe.date.toString());
     }},
 
     testNextButtonClick: function() { with(this) {
@@ -244,6 +251,11 @@
       var nextMonth = new Date(timeframe.initDate);
       nextMonth.setMonth(nextMonth.getMonth() + 2); // travel 2 forward
       assertEqual(nextMonth.toString(), timeframe.date.toString());
+      // Make sure it doesn't move foward if button is disabled
+      timeframe.buttons.get('next').get('element').addClassName('disabled');
+      Event.simulateMouse(timeframe.buttons.get('next').get('element'), 'click');
+      nextMonth.setMonth(nextMonth.getMonth() + 2);
+      assertNotEqual(nextMonth.toString(), timeframe.date.toString());
     }},
 
     testTodayButtonClick: function() { with(this) {
@@ -452,6 +464,7 @@
       });
       assert(timeframe.element.select('td').first().hasClassName('unselectable'));
       assert(!timeframe.element.select('td').last().hasClassName('unselectable'));
+      assert(timeframe.buttons.get('previous').get('element').hasClassName('disabled'));
     }},
 
     testLatest: function() { with(this) {
@@ -460,6 +473,7 @@
       });
       assert(timeframe.element.select('td').last().hasClassName('unselectable'));
       assert(!timeframe.element.select('td').first().hasClassName('unselectable'));
+      assert(timeframe.buttons.get('next').get('element').hasClassName('disabled'));
     }},
 
     testMaxRange: function() { with(this) {
