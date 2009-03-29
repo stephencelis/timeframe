@@ -33,10 +33,10 @@ var Timeframe = Class.create({
     this.format       = this.options.get('format')     || Locale.get('format');
     this.weekOffset   = this.options.get('weekOffset') || Locale.get('weekOffset');
     this.maxRange = this.options.get('maxRange');
-    
+
     this.firstDayId = this.element.id + '_firstday';
     this.lastDayId = this.element.id + '_lastday';
-    
+
     this.scrollerDelay = 0.5;
 
     this.buttons = $H({
@@ -94,7 +94,7 @@ var Timeframe = Class.create({
     this.element.down('div#' + this.element.id + '_container').insert(calendar);
     this.calendars.push(calendar);
     this.months = this.calendars.length;
-    
+
     return this;
   },
 
@@ -107,11 +107,12 @@ var Timeframe = Class.create({
   populate: function() {
     var month = this.date.neutral();
     month.setDate(1);
-    
-    this.earliest === null || this.earliest < month ?
-      this.buttons.get('previous').get('element').removeClassName('disabled') :
+
+    if (this.earliest === null || this.earliest < month)
+      this.buttons.get('previous').get('element').removeClassName('disabled');
+    else
       this.buttons.get('previous').get('element').addClassName('disabled');
-    
+
     this.calendars.each(function(calendar) {
       var caption = calendar.select('caption').first();
       caption.update(this.monthNames[month.getMonth()] + ' ' + month.getFullYear());
@@ -141,7 +142,7 @@ var Timeframe = Class.create({
 
       month.setMonth(month.getMonth() + 1);
     }.bind(this));
-    
+
     this.latest === null || this.latest > month.setDate(-1) ?
       this.buttons.get('next').get('element').removeClassName('disabled') :
       this.buttons.get('next').get('element').addClassName('disabled');
@@ -353,8 +354,8 @@ var Timeframe = Class.create({
       this.toggleClearButton(event);
     else if (event.findElement('span.clear span.active'));
     else if (el = event.findElement('td.selectable')) {
+      window.clearInterval(this.timer);
       if (el.id == this.lastDayId) {
-        window.clearInterval(this.timer);
         this.timer = window.setInterval(function() {
           if (!this.buttons.get('next').get('element').hasClassName('disabled')) {
             this.date.setMonth(this.date.getMonth() + 1);
@@ -362,20 +363,17 @@ var Timeframe = Class.create({
           }
         }.bind(this), this.scrollerDelay * 1000);
       } else if (el.id == this.firstDayId) {
-        window.clearInterval(this.timer);
         this.timer = window.setInterval(function() {
           if (!this.buttons.get('previous').get('element').hasClassName('disabled')) {
             this.date.setMonth(this.date.getMonth() - 1);
             this.populate().refreshRange();
           }
         }.bind(this), this.scrollerDelay * 1000);
-      } else {
-        window.clearInterval(this.timer);
       }
       this.extendRange(el.date);
     } else this.toggleClearButton(event);
   },
-  
+
   clearTimer: function(event) {
     window.clearInterval(this.timer);
     return this;
