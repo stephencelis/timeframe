@@ -192,6 +192,8 @@ var Timeframe = Class.create({
     document.observe('click', this.eventClick.bind(this));
     this.element.observe('mousedown', this.eventMouseDown.bind(this));
     this.element.observe('mouseover', this.eventMouseOver.bind(this));
+    $(this.firstDayId).observe('mouseout', this.clearTimer.bind(this));
+    $(this.lastDayId).observe('mouseout', this.clearTimer.bind(this));
     document.observe('mouseup', this.eventMouseUp.bind(this));
     document.observe('unload', this.unregister.bind(this));
     // mousemove listener for Opera in _disableTextSelection
@@ -372,6 +374,11 @@ var Timeframe = Class.create({
       }
       this.extendRange(el.date);
     } else this.toggleClearButton(event);
+  },
+  
+  clearTimer: function(event) {
+    window.clearInterval(this.timer);
+    return this;
   },
 
   toggleClearButton: function(event) {
