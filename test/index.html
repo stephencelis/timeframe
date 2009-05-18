@@ -471,6 +471,10 @@
       var timeframe = new Timeframe('timeframe', {
         startField: 'start', endField: 'end', latest: Date.parseToObject('January 25, 2008')
       });
+      var date = new Date(timeframe.latest);
+      date.setMonth(date.getMonth() - (timeframe.months - 1));
+      assert(timeframe.date.getMonth() == date.getMonth() &&
+        timeframe.date.getYear() == date.getYear());
       assert(timeframe.element.select('td').last().hasClassName('unselectable'));
       assert(!timeframe.element.select('td').first().hasClassName('unselectable'));
       assert(timeframe.buttons.get('next').get('element').hasClassName('disabled'));
@@ -515,7 +519,7 @@
       assertInstanceOf(Date, neutralDate);
       assertEqual(neutralDate.toString(), new Date().neutral().toString());
     }},
-    
+
     // TODO: test Datejs support
 
   }, { testLog: 'testlog' });

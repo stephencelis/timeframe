@@ -1,4 +1,4 @@
-/* Timeframe, version 0.3
+/* Timeframe, version 0.3.1
  * (c) 2008 Stephen Celis
  *
  * Freely distributable under the terms of an MIT-style license. 
@@ -48,9 +48,12 @@ var Timeframe = Class.create({
     this.fields = $H({ start: $(this.options.get('startField')), end: $(this.options.get('endField')) });
 
     this.range = $H({});
-    this._buildButtons()._buildFields();
     this.earliest = Date.parseToObject(this.options.get('earliest'));
     this.latest   = Date.parseToObject(this.options.get('latest'));
+    if (this.earliest && this.latest && this.earliest > this.latest)
+      throw new Error("Timeframe: 'earliest' cannot come later than 'latest'");
+
+    this._buildButtons()._buildFields();
 
     this.calendars = [];
     this.element.insert(new Element('div', { id: this.element.id + '_container' }));
@@ -143,10 +146,11 @@ var Timeframe = Class.create({
       month.setMonth(month.getMonth() + 1);
     }.bind(this));
 
-    this.latest === null || this.latest > month.setDate(-1) ?
-      this.buttons.get('next').get('element').removeClassName('disabled') :
+    if (this.latest === null || this.latest > month)
+      this.buttons.get('next').get('element').removeClassName('disabled');
+    else
       this.buttons.get('next').get('element').addClassName('disabled');
-    
+
     return this;
   },
 
@@ -218,9 +222,9 @@ var Timeframe = Class.create({
       this.element.onselectstart = function(event) {
         if (!/input|textarea/i.test(Event.element(event).tagName)) return false;
       };
-    } else if (Prototype.Browser.Opera) {
+    } else if (Prototype.Browser.Opera)
       document.observe('mousemove', this.handleMouseMove.bind(this));
-    } else {
+    else {
       this.element.onmousedown = function(event) {
         if (!/input|textarea/i.test(Event.element(event).tagName)) return false;
       };
@@ -241,6 +245,17 @@ var Timeframe = Class.create({
       field.addClassName('error');
     var date = Date.parseToObject(this.range.get(fieldName));
     this.date = date || new Date();
+    if (this.earliest && this.earliest > this.date) {
+      this.date = new Date(this.earliest);
+    } else if (this.latest) {
+      date = new Date(this.date);
+      date.setMonth(date.getMonth() + (this.months - 1));
+      if (date > this.latest) {
+        this.date = new Date(this.latest);
+        this.date.setMonth(this.date.getMonth() - (this.months - 1));
+      }
+    }
+    this.date.setDate(1);
     if (populate && date) this.populate()
     this.refreshRange();
     return this;
