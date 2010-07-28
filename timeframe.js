@@ -1,7 +1,7 @@
 /* Timeframe, version 0.3.1
  * (c) 2008 Stephen Celis
  *
- * Freely distributable under the terms of an MIT-style license. 
+ * Freely distributable under the terms of an MIT-style license.
  * ------------------------------------------------------------- */
 
 if (typeof Prototype == 'undefined' || parseFloat(Prototype.Version.substring(0, 3)) < 1.6)
@@ -24,7 +24,7 @@ var Timeframe = Class.create({
     Timeframes.push(this);
 
     this.element = $(element);
-    this.element.addClassName('timeframe_calendar')
+    this.element.addClassName('timeframe_calendar');
     this.options = $H({ months: 2 }).merge(options || {});;
     this.months = this.options.get('months');
 
@@ -44,7 +44,7 @@ var Timeframe = Class.create({
       today:    $H({ label: 'T',      element: $(this.options.get('todayButton')) }),
       reset:    $H({ label: 'R',      element: $(this.options.get('resetButton')) }),
       next:     $H({ label: '&rarr;', element: $(this.options.get('nextButton')) })
-    })
+    });
     this.fields = $H({ start: $(this.options.get('startField')), end: $(this.options.get('endField')) });
 
     this.range = $H({});
@@ -58,7 +58,7 @@ var Timeframe = Class.create({
     this.calendars = [];
     this.element.insert(new Element('div', { id: this.element.id + '_container' }));
     this.months.times(function(month) { this.createCalendar(month) }.bind(this));
-    
+
     this.calendars.first().select('td').first().id = this.firstDayId;
     this.calendars.last().select('td').last().id = this.lastDayId;
 
@@ -167,7 +167,7 @@ var Timeframe = Class.create({
         item.insert(button);
         buttonList.insert(item);
       }
-    }.bind(this))
+    }.bind(this));
     if (buttonList.childNodes.length > 0) this.element.insert({ top: buttonList });
     this.clearButton = new Element('span', { className: 'clear' }).update(new Element('span').update('X'));
     return this;
@@ -256,7 +256,7 @@ var Timeframe = Class.create({
       }
     }
     this.date.setDate(1);
-    if (populate && date) this.populate()
+    if (populate && date) this.populate();
     this.refreshRange();
     return this;
   },
@@ -401,7 +401,7 @@ var Timeframe = Class.create({
       else if (el = this.element.select('.active.selected').first());
       else if (el = this.element.select('.post.selected').first());
       if (el) Element.insert(el, { top: this.clearButton });
-      this.clearButton.show().select('span').first().removeClassName('active');        
+      this.clearButton.show().select('span').first().removeClassName('active');
     } else
       this.clearButton.hide();
   },
