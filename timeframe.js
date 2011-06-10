@@ -511,7 +511,7 @@ Object.extend(Date.prototype, {
     var hours = this.getHours(), minutes = this.getMinutes();
     function pad(num) { return num.toPaddedString(2); };
 
-    return format.gsub(/\%([aAbBcdHImMpSwyY])/, function(part) {
+    return format.gsub(/\%([aAbBcdHImMpsSwyY])/, function(part) {
       switch(part[1]) {
         case 'a': return Locale.get('dayNames').invoke('substring', 0, 3)[day].escapeHTML(); break;
         case 'A': return Locale.get('dayNames')[day].escapeHTML(); break;
@@ -524,6 +524,7 @@ Object.extend(Date.prototype, {
         case 'm': return pad(month + 1); break;
         case 'M': return pad(minutes); break;
         case 'p': return hours >= 12 ? 'PM' : 'AM'; break;
+        case 's': return this.getTime()/1000;
         case 'S': return pad(this.getSeconds()); break;
         case 'w': return day; break;
         case 'y': return pad(this.getFullYear() % 100); break;
