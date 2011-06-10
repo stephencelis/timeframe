@@ -19,9 +19,12 @@ dd {
   background: #eee;
   border: 3px solid #fff;
   
+  box-shadow:         0 1px 10px #999;
   -webkit-box-shadow: 0 1px 10px #999;
+  -moz-box-shadow:    0 1px 10px #999;
+  border-radius:         6px;
   -webkit-border-radius: 6px;
-  -moz-border-radius: 7px;
+  -moz-border-radius:    6px;
 }
 
 /* Form */
@@ -38,7 +41,9 @@ dd {
   display: inline-block;
   padding: 0 4px;
 
+  box-shadow:         0 1px 1px #ccc;
   -webkit-box-shadow: 0 1px 1px #ccc;
+  -moz-box-shadow:    0 1px 1px #ccc;
 }
 #calendar_form #fields span input {
   border-style: none;
@@ -47,8 +52,9 @@ dd {
   padding: 2px 6px;
   width: 96px;
 
+  border-radius:         10px;
   -webkit-border-radius: 10px;
-  -moz-border-radius: 11px;
+  -moz-border-radius:    11px;
 }
 #calendar_form #fields span input:focus {
   outline: none;

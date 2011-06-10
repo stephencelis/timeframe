@@ -23,7 +23,9 @@ div.timeframe_calendar ul.timeframe_menu li a {
   padding: 2px 0 0;
   text-decoration: none;
   width: 20px;
+  box-shadow:         0 1px 2px #999;
   -webkit-box-shadow: 0 1px 2px #999;
+  -moz-box-shadow:    0 1px 2px #999;
 }
 div.timeframe_calendar ul.timeframe_menu li a.previous, div.timeframe_calendar ul.timeframe_menu li a.next {
   background: #fff;
@@ -51,12 +53,16 @@ div.timeframe_calendar ul.timeframe_menu li a.today:active {
   background: #024522;
 }
 div.timeframe_calendar ul.timeframe_menu li a.previous {
+  border-top-left-radius:             10px;
+  border-bottom-left-radius:          10px;
   -webkit-border-top-left-radius:     10px;
   -webkit-border-bottom-left-radius:  10px;
   -moz-border-radius-topleft:         11px;
   -moz-border-radius-bottomleft:      11px;
 }
 div.timeframe_calendar ul.timeframe_menu li a.next {
+  border-top-right-radius:             10px;
+  border-bottom-right-radius:          10px;
   -webkit-border-top-right-radius:     10px;
   -webkit-border-bottom-right-radius:  10px;
   -moz-border-radius-topright:         11px;
@@ -90,7 +96,9 @@ div.timeframe_calendar thead {
 /* Days */
 div.timeframe_calendar tbody {
   background: #fff;
+  box-shadow:         0px 2px 6px #999;
   -webkit-box-shadow: 0px 2px 6px #999;
+  -moz-box-shadow:    0px 2px 6px #999;
 }
 div.timeframe_calendar tbody td {
   cursor: pointer;
