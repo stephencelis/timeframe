@@ -16,9 +16,9 @@ div.timeframe_calendar tbody td.startendrange {
 div.timeframe_calendar tbody td span.clear span {
   filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/closebox.png', sizingMethod='crop');
 }
-  div.timeframe_calendar tbody td span.clear span.active {
-    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/closebox_selected.png', sizingMethod='crop');
-  }
+div.timeframe_calendar tbody td span.clear span.active {
+  filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/closebox_selected.png', sizingMethod='crop');
+}
 div.timeframe_calendar tbody td.beyond {
   filter: none;
 }
