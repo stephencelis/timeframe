@@ -82,6 +82,7 @@ Contributors:
 * Justin Palmer ("Caged")
 * Nik Wakelin ("codetocustomer")
 * Sebastien Grosjean ("ZenCocoon")
+* Will Bryant ("willbryant")
 
 
 Download:
@@ -94,5 +95,5 @@ More information can be found
 [here](http://stephencelis.com/projects/timeframe).
 
 
-Copyright (c) 2008 [Stephen Celis](http://stephencelis.com), released under
+Copyright (c) 2008-2011 [Stephen Celis](http://stephencelis.com), released under
 the [MIT license](http://en.wikipedia.org/wiki/Mit_license).
