@@ -3,57 +3,63 @@ body {
   text-shadow: 0 0 0 #fff;
   margin: 0;
 }
-  #page_container {
-    margin: auto;
-    width: 600px;
-  }
-  p {
-    line-height: 1.4;
-  }
-  dd {
-    padding: 0 0 10px;
-  }
-  #example {
-    padding: 10px;
-    padding: 5px 128px 40px;
-    background: #eee;
-    border: 3px solid #fff;
-    
-    -webkit-box-shadow: 0 1px 10px #999;
-    -webkit-border-radius: 6px;
-    -moz-border-radius: 7px;
-  }
+#page_container {
+  margin: auto;
+  width: 600px;
+}
+p {
+  line-height: 1.4;
+}
+dd {
+  padding: 0 0 10px;
+}
+#example {
+  padding: 10px;
+  padding: 5px 128px 40px;
+  background: #eee;
+  border: 3px solid #fff;
+  
+  box-shadow:         0 1px 10px #999;
+  -webkit-box-shadow: 0 1px 10px #999;
+  -moz-box-shadow:    0 1px 10px #999;
+  border-radius:         6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius:    6px;
+}
 
 /* Form */
 
 #calendar_form {
   clear: both;
 }
-  #calendar_form #labels label {
-    font-weight: bold;
-  }
-  #calendar_form #fields span {
-    background: #ccc;
-    border-bottom: 1px solid #999;
-    display: inline-block;
-    padding: 0 4px;
+#calendar_form #labels label {
+  font-weight: bold;
+}
+#calendar_form #fields span {
+  background: #ccc;
+  border-bottom: 1px solid #999;
+  display: inline-block;
+  padding: 0 4px;
 
-    -webkit-box-shadow: 0 1px 1px #ccc;
-  }
-    #calendar_form #fields span input {
-      border-style: none;
-      background-color: transparent;
-      font-size: 14px;
-      padding: 2px 6px;
-      width: 96px;
+  box-shadow:         0 1px 1px #ccc;
+  -webkit-box-shadow: 0 1px 1px #ccc;
+  -moz-box-shadow:    0 1px 1px #ccc;
+}
+#calendar_form #fields span input {
+  border-style: none;
+  background-color: transparent;
+  font-size: 14px;
+  padding: 2px 6px;
+  width: 96px;
 
-      -webkit-border-radius: 10px;
-      -moz-border-radius: 11px;
-    }
-      #calendar_form #fields span input:focus {
-        outline: none;
-        background: #aaa;
-      }
-      #calendar_form #fields span input.error {
-        background: #faa;
-      }
+  border-radius:         10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius:    11px;
+}
+#calendar_form #fields span input:focus {
+  outline: none;
+  background: #aaa;
+}
+#calendar_form #fields span input.error {
+  background: #faa;
+}
