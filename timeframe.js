@@ -1,5 +1,5 @@
 /* Timeframe, version 0.3.1
- * (c) 2008 Stephen Celis
+ * (c) 2008-2011 Stephen Celis
  *
  * Freely distributable under the terms of an MIT-style license.
  * ------------------------------------------------------------- */
