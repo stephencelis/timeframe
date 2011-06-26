@@ -443,12 +443,13 @@ var Timeframe = Class.create({
     if (!this.dragging) return;
     if (!this.stuck) {
       this.dragging = false;
-      if (this.timer)
+      if (this.timer) {
         clearInterval(this.timer);
+      }
       if (event.findElement('span.clear span.active')) {
         this.clearRange();
-      } else {
-        if (this.options.keys().include('onFinished')) this.options.get('onFinished')();
+      } else if (this.options.keys().include('onFinished')) {
+        this.options.get('onFinished')();
       }
     }
     this.mousedown = false;
