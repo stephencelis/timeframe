@@ -34,6 +34,8 @@ var Timeframe = Class.create({
     this.weekOffset   = this.options.get('weekOffset') || Locale.get('weekOffset');
     this.maxRange = this.options.get('maxRange');
 
+    this.selectableDays = this.options.get('selectableDays') || new Array(0, 1, 2, 3, 4, 5, 6);
+
     this.firstDayId = this.element.id + '_firstday';
     this.lastDayId = this.element.id + '_lastday';
 
@@ -132,7 +134,7 @@ var Timeframe = Class.create({
       calendar.select('td').each(function(day) {
         day.date = new Date(iterator); // Is this expensive (we unload these later)? We could store the epoch time instead.
         day.update(day.date.getDate()).writeAttribute('class', inactive || 'active');
-        if ((this.earliest && day.date < this.earliest) || (this.latest && day.date > this.latest))
+        if ((this.earliest && day.date < this.earliest) || (this.latest && day.date > this.latest) || !this.selectableDays.include(day.date.getDay()))
           day.addClassName('unselectable');
         else
           day.addClassName('selectable');
