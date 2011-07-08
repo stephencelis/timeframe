@@ -287,6 +287,8 @@ var Timeframe = Class.create({
       error = 'soft';
     else if (fieldName == 'end' && this.range.get('start') && date < this.range.get('start'))
       error = 'soft';
+    else if (!this.selectableDays.include(date.getDay()))
+      error = 'hard';
     return error;
   },
 
