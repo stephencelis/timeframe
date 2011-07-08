@@ -33,6 +33,7 @@ var Timeframe = Class.create({
     this.format       = this.options.get('format')     || Locale.get('format');
     this.weekOffset   = this.options.get('weekOffset') || Locale.get('weekOffset');
     this.maxRange = this.options.get('maxRange');
+    this.minRange = this.options.get('minRange');
 
     this.selectableDays = this.options.get('selectableDays') || new Array(0, 1, 2, 3, 4, 5, 6);
 
@@ -435,6 +436,16 @@ var Timeframe = Class.create({
           start = new Date(this.startdrag);
           start.setDate(start.getDate() - range);
         }
+      }
+    }
+
+    if (this.minRange) {
+      var range = this.minRange;
+      var days = parseInt((end - start) / 86400000);
+
+      if (days < range) {
+        end = new Date(this.startdrag);
+        end.setDate(end.getDate() + range);
       }
     }
     this.range.set('start', start);
